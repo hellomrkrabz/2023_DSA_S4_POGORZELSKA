@@ -1,0 +1,107 @@
+//all of this must be here because "prolog: yes"
+@import "../../../../node_modules/bootstrap/scss/functions";
+@import "../../../../node_modules/bootstrap/scss/mixins";
+@import "../../../../node_modules/bootstrap/scss/mixins/buttons";
+@import "../../../../node_modules/bootstrap/scss/variables";
+
+
+//===================================================================================COLORS=================================================================================
+
+$banana-blue: #21C5BB;
+
+$mynewcolor: $banana-blue;
+
+//=================================================================================THEMES======================================================================================
+
+//custom banana themes
+$banana-theme-colors: (
+    "banana-blue" : $banana-blue
+);
+
+//merging all color themes together
+$theme-colors: map-merge-multiple($theme-colors, $banana-theme-colors);
+
+
+//=============================================================================================================================================================================
+
+//importing bootstrap, I know... very weird place for it but SASS is stupid piece of shit and other things will not work otherwise XD 
+@import "../../../../node_modules/bootstrap/scss/bootstrap.scss";
+
+//=================================================================================MIXINS=====================================================================================
+
+.btn-banana-primary{
+    @include button-variant(
+        $background: $banana-blue,
+        $border: $banana-blue,
+        $color: $white, 
+        $hover-color: $white
+    );
+
+    border-radius: var(--bs-border-radius-sm) !important;
+
+}
+
+.btn-banana-white-outline{
+    @include button-outline-variant(
+        $color: $white,
+        $color-hover: $white,
+        $active-background: tint-color($banana-blue, $btn-active-bg-shade-amount),
+    );
+    margin: 0.25rem;
+    border-radius: var(--bs-border-radius-sm) !important;
+}
+
+//=================================================================================CIRCLE=====================================================================================
+.circle{
+    border-radius :50%;
+}
+
+//=================================================================================TEXT SHADOWS===============================================================================
+.text-shadow-light{
+    text-shadow: 0px 3px 4px #858585;
+}
+
+//=================================================================================CUSTOM ANIMATONS===========================================================================
+@keyframes fadeIn {
+    0% {background-color: white; }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes App-logo-spin {
+
+    from {
+  
+      transform: rotate(0deg);
+  
+    }
+  
+    to {
+  
+      transform: rotate(360deg);
+  
+    }
+  
+  }
+//=================================================================================BOOK COVER=================================================================================
+.book-title{
+    @extend .bg-black;
+    @extend .bg-opacity-50;
+    @extend .text-center;
+    @extend .opacity-0;
+    @extend .text-white;
+
+    position: absolute;
+    height: 200px;
+    width: 130px;
+
+
+    &:hover {
+        @extend .opacity-100;
+        animation: fadeIn infinite 1s linear; 
+    }  
+}
+
+.fidget-spinner{
+    animation: App-logo-spin infinite 20s linear; 
+}
+  
