@@ -14,7 +14,7 @@ function OthersProfile(props) {
                     <div>
                         <img className="circle col-12 border border-5 border-banana-blue mt-1"src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2014/01/14/12/monkey-bananav3.jpg?width=1200" height="300px" alt="monke"/> 
                     </div>
-                    <div className="fw-normal fs-3 text-shadow-light">Twoja stara mara lalala bala</div>
+                    <div className="fw-normal fs-3 text-shadow-light">Zenek</div>
                     <div className="mt-3">
                         <div className="fw-bold">User rating</div>
                         <div className="ms-5">
@@ -42,8 +42,8 @@ function OthersProfile(props) {
                     <ProfileBookList title={"Offered Books"} moreLink={"/OfferedBooks"} addLink={"/OfferedBooks"}></ProfileBookList>
 
                     <ProfileOpinionsList 
-                        sender1={"idiot1"} text1={"not gut"} moreLink={"/Opinions"}
-                        sender2={"idiot2"} text2={"it was great 2/10"}>
+                        sender1={"JustAnormalUser"} text1={"not gut"} moreLink={"/Opinions"}
+                        sender2={"AdiffrentUser"} text2={"it was great 2/10"}>
                     </ProfileOpinionsList>
                  </div>
             </div>
