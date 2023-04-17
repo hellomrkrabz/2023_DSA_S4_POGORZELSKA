@@ -72,6 +72,3 @@ def edit_profile():
             error = "Unknown error:\n" + errMsg
         print(f"Error {error}")
         return jsonify({'msg': error})
-    else:
-        print(f"User {user_id} edited succesfully")
-        return jsonify({'msg': 'User edited successfully'})

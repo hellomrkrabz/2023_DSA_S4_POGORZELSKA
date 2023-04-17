@@ -97,11 +97,11 @@ $theme-colors: map-merge-multiple($theme-colors, $banana-theme-colors);
 
     &:hover {
         @extend .opacity-100;
-        animation: fadeIn infinite 1s linear; 
+        // animation: fadeIn infinite 1s linear; 
     }  
 }
 
 .fidget-spinner{
-    animation: App-logo-spin infinite 20s linear; 
+    // animation: App-logo-spin infinite 20s linear; 
 }
   

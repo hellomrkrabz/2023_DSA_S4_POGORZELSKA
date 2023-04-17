@@ -38,6 +38,9 @@ def create_app(test_config=None):
     from . import profile
     app.register_blueprint(profile.bp)
 
+    from . import account_verification
+    app.register_blueprint(account_verification.bp)
+
 
 
 

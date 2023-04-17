@@ -15,7 +15,7 @@ function Navbar(props) {
 
             <div className="d-flex flex-end">
             {props.site == "Register" && 
-                <a className="btn btn-outline-banana-blue" href="/Login">Login</a>
+                <a className="btn btn-banana-white-outline" href="/Login">Login</a>
             }
             {props.site == "Login" && 
                 <a className="btn btn-banana-white-outline" href="/Register">Sign Up</a>
@@ -34,10 +34,13 @@ function Navbar(props) {
             }
             {props.site == "/Profile" && 
                 <>
-                    {props.isEditing ? 
-                        <a className="btn btn-banana-white-outline" onClick={()=>props.setIsEditing(false)}>Profile</a>
+                    {props.isLoggedIn ?
+                        props.isEditing ? 
+                            <a className="btn btn-banana-white-outline" onClick={()=>props.setIsEditing(false)}>Profile</a>
+                        :
+                            <a className="btn btn-banana-white-outline" onClick={()=>props.setIsEditing(true)}>Edit Profile</a>
                     :
-                        <a className="btn btn-banana-white-outline" onClick={()=>props.setIsEditing(true)}>Edit Profile</a>
+                        <a className="btn btn-banana-white-outline" href="/Profile">My Profile</a>
                     }
                     <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
                 </>

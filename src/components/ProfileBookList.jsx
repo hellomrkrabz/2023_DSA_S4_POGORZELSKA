@@ -17,10 +17,11 @@ function ProfileBookList(props) {
             </div>
 
             <div className="align-self-center col-2">
-                    {props.addLink !== undefined &&
-                        <Link to={props.addLink}>
-                            <button className="btn btn-banana-primary col-10">Add new</button>
-                        </Link>
+                    {props.isLoggedIn &&
+                        props.addLink !== undefined &&
+                            <Link to={props.addLink}>
+                                <button className="btn btn-banana-primary col-10">Add new</button>
+                            </Link>
                     }
                     <Link to={props.moreLink}>
                         <button className="btn btn-banana-primary col-10 mt-2">See more 1</button>

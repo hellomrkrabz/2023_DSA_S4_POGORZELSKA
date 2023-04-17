@@ -8,19 +8,23 @@ from .email_sender import send_mail_with_msg, send_mail_with_html, send_mail_fro
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
 
-bp = Blueprint("user_validation", __name__, url_prefix='/user_validation')
+bp = Blueprint("acc_ver", __name__, url_prefix='/user_validation')
 
 
 
 @bp.route('/account_verification', methods=['POST'])
 def VerifyAccount():
+
     data = request.get_json()
 
     receivedVerificationString = data['sentVerificationString']
+    print(receivedVerificationString)
+
+    user = User.query.filter_by(verificationHash=receivedVerificationString).first()
 
     error = None
 
-    if receivedVerificationString is not user.verificationHash
+    if user is None:
         error = 'Something went wrong, try again'    
 
     if error is not None:
@@ -28,7 +32,7 @@ def VerifyAccount():
         return jsonify({"msg": error})
 
     try:
-        user.verifiedAccount = true
+        user.verifiedAccount = True
         db.session.commit()
         return jsonify({"msg": "true"})
     except Exception as e:

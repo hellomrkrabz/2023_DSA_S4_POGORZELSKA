@@ -32,7 +32,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-back": "cd backend && flask --app flaskr --debug run",
+    "start-back": "cd backend && flask --app flaskr run",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

@@ -5,43 +5,63 @@ import BookInfo from "./sites/BooksInfo.jsx";
 import Login from "./sites/Login.jsx"
 import Profile from "./sites/Profile.jsx";
 import AccountVerification from "./sites/AccountVerification.jsx";
+import Logout from "./sites/Logout.jsx";
+import { BrowserRouter } from 'react-router-dom';
+
+var sessionUserKey= sessionStorage.getItem("sessionUserKey")
 
 function App() {
 
-  const routes = [
-    {
-      path: '/',
-      element: <BookInfo />,
-    },
-    {
-      path: '/Register',
-      element: <Register />,
-    },
-    {
-      path: '/Login',
-      element: <Login />,
-    },
-    {
-      path: '/Profile/:username',
-      element: <Profile />,
-    },
-    {
-      path: '/Profile',
-      element: <Profile />,
-    },
-    {
-      path: '/Profile/',
-      element: <Profile />,
-    },
-    {
-        path: '/AccountVerification/:generatedstring',
-        element: <AccountVerification />,
-    }
-
-  ];
+  if(sessionUserKey!==null)
+  {
+    var routes = [
+      {
+        path: '/',
+        element: <BookInfo />,
+      },
+      {
+        path: '/Profile/:username',
+        element: <Profile />,
+      },
+      {
+        path: '/Logout',
+        element: <Logout />,
+      },
+      {
+        path: '*',
+        navigate: "/",
+      },
+    ];
+  }else
+  {
+    var routes = [
+      {
+        path: '/',
+        element: <BookInfo />,
+      },
+      {
+        path: '/Register',
+        element: <Register />,
+      },
+      {
+        path: '/Login',
+        element: <Login />,
+      },
+      {
+          path: '/AccountVerification/:generatedstring',
+          element: <AccountVerification />,
+      },
+      {
+        path: '*',
+        navigate: "/",
+      },
+    ];
+  }
 
   return(
-    <Router routes={routes} />
+    <BrowserRouter>
+      <Router routes={routes} />
+    </BrowserRouter>
   );
 }
 
