@@ -7412,6 +7412,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"google-books-js@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "google-books-js@npm:1.0.2"
+  checksum: de7bd8d3eaedae9002ff10ff47cadebda4b81d2547ec6ae0b067019d6d9ef99f97f208434a1a852147b16471e07d293c473f051fa3b6b170083d84e8a13ccd59
+  languageName: node
+  linkType: hard
+
 "gopd@npm:^1.0.1":
   version: 1.0.1
   resolution: "gopd@npm:1.0.1"
@@ -13058,6 +13065,7 @@ __metadata:
     bootstrap: ^5.2
     cors: ^2.8.5
     express: ^4.18.2
+    google-books-js: ^1.0.2
     mui: ^0.0.1
     package.json: ^2.0.1
     react: ^18.2.0

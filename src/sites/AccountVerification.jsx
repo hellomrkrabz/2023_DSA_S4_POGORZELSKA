@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios'
-import { v4 } from 'uuid';
-import Navbar from './../components/Navbar'
 import bookshelf from './../media/bookshelf.png'
 
 function AccountVerification() {

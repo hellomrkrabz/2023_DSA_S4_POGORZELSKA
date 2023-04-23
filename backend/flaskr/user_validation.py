@@ -1,4 +1,4 @@
-from .user import User
+from .user import User, Permissions
 from . import db
 from flask import Blueprint, g, redirect, request, make_response, session, url_for, jsonify
 from werkzeug.security import generate_password_hash
@@ -23,7 +23,7 @@ def Register():
     username = data['sentUsername']
     password = data['sentPassword']
     confirmPassword = data['confirmPassword']
-    avatar = '/avatars/swinior.jpg'
+    avatar = '../public/avatars/swinior.jpg'
     key = 'null'
 
     error = None
@@ -47,7 +47,8 @@ def Register():
                     verificationHash = generate_password_hash(email),
                     avatar=avatar,
                     username=username,
-                    key=key)
+                    key=key,
+                    permissions=Permissions.not_verified)
         db.session.add(user)
         db.session.commit()
         print(f"User sold data to us without knowing:)")
@@ -84,8 +85,10 @@ def login():
 
     if user is None:
         error = 'No such user'
-    elif not user.get_verified():
+    elif user.get_permissions() == Permissions.not_verified:
         error = 'Account is not verified. Check your email and try again later'
+    elif user.get_permissions() == Permissions.banned:
+        error = 'Account is banned.:)'
     elif not user.verify_password(password):
         error = 'Wrong password'
 

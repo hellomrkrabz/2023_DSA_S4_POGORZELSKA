@@ -1,4 +1,4 @@
-from .user import User
+from .user import User, Permissions
 from . import db
 from flask import Blueprint, g, redirect, request, make_response, session, url_for, jsonify
 from werkzeug.security import generate_password_hash
@@ -32,9 +32,12 @@ def VerifyAccount():
         return jsonify({"msg": error})
 
     try:
-        user.verifiedAccount = True
-        db.session.commit()
-        return jsonify({"msg": "true"})
+        if user.get_permissions() == Permissions.not_verified:
+            user.permissions = Permissions.verified
+            db.session.commit()
+            return jsonify({"msg": "true"})
+        else:
+            return jsonify({"msg:": "error"})
     except Exception as e:
         error = str(e)
         print('[ERROR] ::', error)

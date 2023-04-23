@@ -10,10 +10,10 @@ function ProfileBookList(props) {
         <div className="row">
             <p>{props.title}</p>
             <div className="d-flex justify-content-around col-10">
-                <Book {...book}></Book>
-                <Book {...book}></Book>
-                <Book {...book}></Book>
-                <Book {...book}></Book>
+                <Book variant="small" {...book}></Book>
+                <Book variant="small" {...book}></Book>
+                <Book variant="small" {...book}></Book>
+                <Book variant="small" {...book}></Book>
             </div>
 
             <div className="align-self-center col-2">

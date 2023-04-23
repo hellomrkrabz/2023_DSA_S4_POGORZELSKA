@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField"
 import axios from 'axios'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import Navbar from "../components/Navbar";
 import popupStyle from "../style/popup_style.css"
-import BetterTextField from "../components/BetterTextField";
 import Logo from "../components/Logo";
 
 function Login() {
@@ -41,12 +40,28 @@ function Login() {
             <div className="d-flex flex-column align-items-center">
                 <Logo></Logo>
                 <div className="fs-1 mb-4">Login</div>
-                <div className="col-2">
-                    <div><BetterTextField label={"Email"} type={'email'} onChange={(e) => { setEmail(e.target.value) }} ></BetterTextField></div>
-                    <div><BetterTextField label={"Password"} type={'password'} onChange={(e) => { setPassword(e.target.value) }} ></BetterTextField></div>
+                <div className="col-2 row gy-2">
+                    <div><TextField
+                            id="email"
+                            label="email"
+                            type="email"
+                            fullWidth
+                            onChange={(e) => { setEmail(e.target.value) }}
+                        />
+                    </div>
+                    <div><TextField
+                            id="password"
+                            label="Password"
+                            type="password"
+                            fullWidth
+                            onChange={(e) => { setPassword(e.target.value) }}
+                        />
+                    </div>
+                    <div>
+                         <button id="submit" name="submit" className="btn btn-banana-primary col-12" onClick={() => { submit() }}>Login</button>
+                    </div>
+                    <Popup open={openPopup} position="right center" contentStyle={popupStyle} overlayStyle={popupStyle} arrowStyle={popupStyle} closeOnDocumentClick onClose={() => { setOpenPopup(false) }}>  <span> { popupMessage }</span></Popup>
                 </div>
-                <div className="col-2"> <button id="submit" name="submit" className="btn btn-banana-primary col-12" onClick={() => { submit() }}>Login</button></div>
-                <Popup open={openPopup} position="right center" contentStyle={popupStyle} overlayStyle={popupStyle} arrowStyle={popupStyle} closeOnDocumentClick onClose={() => { setOpenPopup(false) }}>  <span> { popupMessage }</span></Popup>
             </div>
         </>
     );

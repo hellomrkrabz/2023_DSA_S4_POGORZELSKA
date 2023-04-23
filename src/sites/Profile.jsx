@@ -23,6 +23,11 @@ function Profile(props) {
     useEffect(() => {
         
         axios.get("http://localhost:5000/api/user_info/" + getUserNameFromLink()).then((response) => {
+            
+            let tmp= response.data.user.avatar
+            tmp = tmp.substring(2,tmp.length-1)
+            response.data.user.avatar = "data:image/png;base64, " + tmp; 
+
             setUser(response.data.user)
             if(sessionUserUsername===response.data.user.username)
             {
@@ -35,10 +40,10 @@ function Profile(props) {
     return (
         <>
             <div>
-                <Navbar site={"/Profile"} setIsEditing={setIsEditing} isEditing={isEditing} isLoggedIn={isLoggedIn}/>
+                <Navbar site={"/Profile"} setIsEditing={setIsEditing} isEditing={isEditing} isLoggedIn={isLoggedIn} username={sessionUserUsername}/>
             </div>
 
-            <div className="d-flex flex-grow-1">
+            <div className="d-flex flex-grow-1 justify-content-center">
                 {
                     isLoggedIn ?
                         isEditing ? 

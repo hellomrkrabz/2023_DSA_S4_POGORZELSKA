@@ -43,6 +43,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["bootstrap", "virtual:eda7fb88361eb39d619a7b204664532a5e6ad4619940c6ed27faa2768caa0bd8de22678301e1b8bfd0d1686577e2bf53b44081f9bcdbd3ad649700ee4dac1550#npm:5.2.3"],\
             ["cors", "npm:2.8.5"],\
             ["express", "npm:4.18.2"],\
+            ["google-books-js", "npm:1.0.2"],\
             ["mui", "npm:0.0.1"],\
             ["package.json", "npm:2.0.1"],\
             ["react", "npm:18.2.0"],\
@@ -10350,6 +10351,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["google-books-js", [\
+        ["npm:1.0.2", {\
+          "packageLocation": "./.yarn/cache/google-books-js-npm-1.0.2-4e71043be0-de7bd8d3ea.zip/node_modules/google-books-js/",\
+          "packageDependencies": [\
+            ["google-books-js", "npm:1.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["gopd", [\
         ["npm:1.0.1", {\
           "packageLocation": "./.yarn/cache/gopd-npm-1.0.1-10c1d0b534-a5ccfb8806.zip/node_modules/gopd/",\
@@ -17547,6 +17557,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["bootstrap", "virtual:eda7fb88361eb39d619a7b204664532a5e6ad4619940c6ed27faa2768caa0bd8de22678301e1b8bfd0d1686577e2bf53b44081f9bcdbd3ad649700ee4dac1550#npm:5.2.3"],\
             ["cors", "npm:2.8.5"],\
             ["express", "npm:4.18.2"],\
+            ["google-books-js", "npm:1.0.2"],\
             ["mui", "npm:0.0.1"],\
             ["package.json", "npm:2.0.1"],\
             ["react", "npm:18.2.0"],\

@@ -26,9 +26,9 @@ function Navbar(props) {
                     <a className="btn btn-banana-white-outline" href="/Register">Sign Up</a>
                 </>
             }
-            {props.site == "/ForeignProfile" && 
+            {props.site == "/Library" && 
                 <>
-                    <a className="btn btn-banana-white-outline" href="/Profile">My Profile</a>
+                    <a className="btn btn-banana-white-outline" href={"/Profile/"+props.username}>My Profile</a>
                     <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
                 </>
             }
@@ -40,10 +40,27 @@ function Navbar(props) {
                         :
                             <a className="btn btn-banana-white-outline" onClick={()=>props.setIsEditing(true)}>Edit Profile</a>
                     :
-                        <a className="btn btn-banana-white-outline" href="/Profile">My Profile</a>
+                        <a className="btn btn-banana-white-outline" href={"/Profile/"+props.username}>My Profile</a>
                     }
                     <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
                 </>
+            }
+
+            {props.site == "/FrontPage" && 
+                <>
+                {props.isLoggedIn ?
+                <>
+                    <a className="btn btn-banana-white-outline" href={"/Profile/"+props.username}>My Profile</a>
+                    <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
+                </>
+                :
+                <>
+                    <a className="btn btn-banana-white-outline" href="/Login">Login</a>
+                    <a className="btn btn-banana-white-outline" href="/Register">Sign Up</a>
+                </>
+                }
+                
+             </>
             }
             </div>
 
