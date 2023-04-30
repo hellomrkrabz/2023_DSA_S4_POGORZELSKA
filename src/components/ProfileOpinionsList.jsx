@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ScoreComponnent from "./ScoreComponent";
+import ScoreComponent from "./ScoreComponent";
 
 function ProfileOpinionsList(props) {
 
@@ -7,31 +7,39 @@ function ProfileOpinionsList(props) {
     <>
         <div className="mt-5 row">
             <p>Opinions</p>
-            <div className="d-flex col-10 justify-content-around">
-                <div className="card text-center col-4">
-                    <div className="card-header">
-                        {props.sender1} 
-                        <ScoreComponnent score={1.4}></ScoreComponnent>
+            <div className="col-9 col-xl-10">
+                <div className="row row-cols-1 row-cols-lg-2 gx-5 gy-2">
+                    <div className="col">
+                        <div className="card text-center ">
+                            <div className="card-header">
+                                {props.sender1} 
+                                <ScoreComponent score={1.4}></ScoreComponent>
+                            </div>
+                            <div className="card-body">
+                                {props.text1}
+                            </div>
+                        </div>
                     </div>
-                    <div className="card-body">
-                        {props.text1}
-                    </div>
-                </div>
 
-                <div className="card text-center col-4">
-                    <div className="card-header">
-                        {props.sender2} 
-                        <ScoreComponnent score={1.8}></ScoreComponnent>
+                    <div className="col">
+                        <div className="card text-center ">
+                            <div className="card-header">
+                                {props.sender2} 
+                                <ScoreComponent score={1.8}></ScoreComponent>
+                            </div>
+                            <div className="card-body">
+                                {props.text2}
+                            </div>
+                        </div>  
                     </div>
-                    <div className="card-body">
-                        {props.text2}
-                    </div>
-                </div>      
+        
+                </div>
             </div>
 
-            <div className="align-self-center col-2">
+
+            <div className="align-self-center col-3 col-xl-2">
                 <Link to={props.moreLink}>
-                    <button className="btn btn-banana-primary col-10">See more 3</button>
+                    <button className="btn btn-banana-primary col-12">See more 3</button>
                 </Link>
             </div>
         </div>

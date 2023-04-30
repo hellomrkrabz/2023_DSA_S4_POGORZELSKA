@@ -6,8 +6,8 @@ function ProfileInfoComponent(props) {
 
   return (
     <>
-        <div>
-            <img className="circle col-12 border border-5 border-banana-blue mt-1"src={props.avatar} height="300px" alt="monke"/> 
+        <div style={{aspectRatio: "1/1"}}>
+            <img className="rounded-circle col-12 border border-5 border-banana-blue mt-1" src={props.avatar} style={{width: "100%",height:"100%", objectFit: "cover"}} alt="monke"/> 
         </div>
         <div className="fw-normal fs-3 text-shadow-light">{props.username}</div>
         <div className="mt-3">

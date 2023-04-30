@@ -8,6 +8,8 @@ import Logout from "./sites/Logout.jsx";
 import { BrowserRouter } from 'react-router-dom';
 import FrontPage from "./sites/FrontPage.jsx";
 import Library from "./sites/Library.jsx";
+import Transactions from './sites/Transactions.jsx';
+import Reports from './sites/Reports.jsx'
 
 var sessionUserKey= sessionStorage.getItem("sessionUserKey")
 var sessionUsername= sessionStorage.getItem("sessionUserUsername")
@@ -31,11 +33,35 @@ function App() {
       },
       {
         path: '/PersonalLibrary',
-        element: <Library type="personal" site="/Library"/>,
+        element: <Library type="personal" site="/Library" username={sessionUsername}/>,
+      },
+      {
+        path: '/PersonalLibrary/Add',
+        element: <Library type="personal" mode="add" site="/Library" username={sessionUsername}/>,
+      },
+      {
+        path: '/PersonalLibrary/AddOffered',
+        element: <Library type="personal" mode="addoffered" site="/Library" username={sessionUsername}/>,
+      },
+      {
+        path: '/PersonalLibrary/Offered',
+        element: <Library type="personal" mode="offered" site="/Library" username={sessionUsername}/>,
       },
       {
         path: '/WantedLibrary',
-        element: <Library type="wanted" site="/Library"/>,
+        element: <Library type="wanted" site="/Library" username={sessionUsername}/>,
+      },
+      {
+        path: '/WantedLibrary/Add',
+        element: <Library type="wanted" mode="add" site="/Library" username={sessionUsername}/>,
+      },
+      {
+        path: '/Transactions',
+        element: <Transactions site="/Transactions" username={sessionUsername} />,
+      },
+      {
+        path: '/Reports',
+        element: <Reports/>,
       },
       {
         path: '*',

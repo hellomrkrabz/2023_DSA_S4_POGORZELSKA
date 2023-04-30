@@ -8,6 +8,7 @@
 //===================================================================================COLORS=================================================================================
 
 $banana-blue: #21C5BB;
+$banana-blue-dark: #218481;
 
 $mynewcolor: $banana-blue;
 
@@ -22,6 +23,8 @@ $banana-theme-colors: (
 $theme-colors: map-merge-multiple($theme-colors, $banana-theme-colors);
 
 
+//==========================================================================FIXING BOOTSTRAP SHIT==============================================================================
+$grid-row-columns:8;
 //=============================================================================================================================================================================
 
 //importing bootstrap, I know... very weird place for it but SASS is stupid piece of shit and other things will not work otherwise XD 
@@ -33,6 +36,18 @@ $theme-colors: map-merge-multiple($theme-colors, $banana-theme-colors);
     @include button-variant(
         $background: $banana-blue,
         $border: $banana-blue,
+        $color: $white, 
+        $hover-color: $white
+    );
+
+    border-radius: var(--bs-border-radius-sm) !important;
+
+}
+
+.btn-banana-primary-dark{
+    @include button-variant(
+        $background: $banana-blue-dark,
+        $border: $banana-blue-dark,
         $color: $white, 
         $hover-color: $white
     );

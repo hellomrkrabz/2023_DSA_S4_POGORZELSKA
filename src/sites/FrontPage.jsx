@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import banana from "../media/banana.png"
+import search from "../media/search.png"
 import win31 from "../media/win31.png"
 import korwin from "../media/korwin.png"
 import pattern from "../media/datapattern.png"
@@ -26,40 +26,53 @@ function FrontPage(props) {
 
             {props.isLoggedIn ? 
             <>
-                <div className="container-fluid">
+                <div className="container-fluid flex-grow-1 d-flex flex-column">
                     <div className="row">
-                        <img src={beer} height="300px"/>
+                        <img src={beer} className="p-0" style={{objectFit: 'cover', height: '320px',}}/>
                     </div>
 
-                    <div className="row">
-                        <div className="col-2">
-                            <Link to="/PersonalLibrary">
-                                <button>My Library</button>
-                            </Link>
+                    <div className="row bg-banana-blue p-2">
+                        <div className="col-xl-3 col-md-6 row gx-3">
+                            <div className="col d-flex justify-content-center align-items-center">
+                                <Link to="/PersonalLibrary" className="col-12">
+                                    <button className="btn btn-banana-primary-dark col-12">My Library</button>
+                                </Link>
+                            </div>
+                            <div className="col d-flex justify-content-center align-items-center">
+                                <button className="btn btn-banana-primary-dark col-12">Genre</button>
+                            </div>
+                            <div className="col d-flex justify-content-center align-items-center">
+                                <button className="btn btn-banana-primary-dark col-12">Location</button>
+                            </div>
                         </div>
-                        <div className="col-2">
-                            <button>Genre</button>
-                        </div>
-                        <div className="col-2">
-                            <button>Location</button>
-                        </div>
+
                         
-                        <div className="col-3">
-                            <Textfield id="searchBar" label="Outlined" variant="outlined" ><img src={banana} height="20px"/></Textfield>
-                        </div>
-                        <div className="col-2">
-                            <button>Search</button>
+                        <div className="col-xl-9 col-md-6 d-flex justify-content-end col-12">
+                            <div className="col-3 align-self-center">
+                                <input type="text" className="form-control" aria-label="Amount (to the nearest dollar)"></input>
+                            </div>
+ 
+                            <button className="btn btn-banana-white-outline">Search</button>
                         </div>
                     </div>
 
-                    <div className="row">
-                        <Book variant="medium" {...book1}></Book>
-                        <Book variant="medium" {...book2}></Book>
-                        <Book variant="medium" {...book3}></Book>
-                        <Book variant="medium" {...book4}></Book>
-
-                    </div>
-                    
+                        <div className="row gx-5 m-0 mt-4 mb-3 flex-grow-1 d-flex justify-content-center row-cols-lg-5 row-cols-sm-3">
+                            <div className="col d-flex flex-grow-1">
+                                <Book variant="medium" border {...book1}></Book>
+                            </div>
+                            <div className="col d-flex flex-grow-1">
+                                <Book variant="medium" border {...book2}></Book>
+                            </div>
+                            <div className="col d-flex flex-grow-1">
+                                <Book variant="medium" border {...book3}></Book>
+                            </div>
+                            <div className="col d-flex flex-grow-1">
+                                <Book variant="medium" border {...book4}></Book>
+                            </div>
+                            <div className="col d-flex flex-grow-1">
+                                <Book variant="medium" border {...book4}></Book>
+                            </div>
+                        </div>                    
                 </div> 
             </>
             :

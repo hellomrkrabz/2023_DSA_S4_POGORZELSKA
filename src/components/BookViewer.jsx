@@ -10,7 +10,7 @@ const BookViewer = () => {
     async function fetchBooks() {
         const books = await googleBooksApi.search({
             filters: {
-                author: "Urszula Stañczyk",
+                author: "Urszula Staï¿½czyk",
             },
         });
 
