@@ -10,6 +10,7 @@ import FrontPage from "./sites/FrontPage.jsx";
 import Library from "./sites/Library.jsx";
 import Transactions from './sites/Transactions.jsx';
 import Reports from './sites/Reports.jsx'
+import Opinions from "./sites/Opinions.jsx";
 
 var sessionUserKey= sessionStorage.getItem("sessionUserKey")
 var sessionUsername= sessionStorage.getItem("sessionUserUsername")
@@ -62,6 +63,10 @@ function App() {
       {
         path: '/Reports',
         element: <Reports/>,
+      },
+      {
+        path: '/Opinions/:username',
+        element: <Opinions username={sessionUsername}/>,
       },
       {
         path: '*',

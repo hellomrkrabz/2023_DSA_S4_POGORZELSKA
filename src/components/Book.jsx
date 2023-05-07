@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import banana from "./../media/banana.png"
 import './../style/bootstrap/css/main_style.css'
 
 function Book(props) {
+
     return(
         <>
         {props.variant==="small" &&
@@ -15,14 +16,16 @@ function Book(props) {
                             <div className="book-title">
                                 <div className="d-flex flex-column justify-content-center h-100">
                                     {props.title}<br/>
-                                    {props.author}
+                                    {props.authors!==undefined &&
+                                        props.authors[0]
+                                    }
                                 </div>
                             </div>
-                            {props.src !== undefined &&
-                                <img src={props.src} alt="book" height="200" width="130"/>
+                            {props.imageLinks!==undefined && props.imageLinks.smallThumbnail !== undefined &&
+                                <img src={props.imageLinks.smallThumbnail} alt="book" height="200" width="130"/>
                             }
 
-                            {props.src === undefined &&
+                            {props.imageLinks!==undefined && props.imageLinks.smallThumbnail === undefined &&
                                 <img src={banana} alt="book" height="200" width="130"/>
                             }
                             

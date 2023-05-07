@@ -46,7 +46,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    from .book import Book
+    from .book import Owned_Book
     from .user import User
 
     # create database tables

@@ -57,6 +57,12 @@ function Navbar(props) {
                     <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
                 </>
             }
+            {props.site == "/Opinions" &&
+                <>
+                    <a className="btn btn-banana-white-outline" href={"/Profile/" + props.username}>My Profile</a>
+                    <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
+                </>
+            }
             {props.site == "/FrontPage" && 
                 <>
                 {props.isLoggedIn ?

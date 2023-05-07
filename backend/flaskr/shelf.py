@@ -1,14 +1,14 @@
 from flask import Flask, request
 import psycopg2
 from . import db
-from .book import Book
+from .book import Owned_Book
 
 class Shelf(db.Model):
     __tablename__ = 'shelves'
     shelf_id = db.Column(db.Integer, primary_key=True)
     shelf_name = db.Column(db.String(15))
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'))
-    books = db.relationship('Book',
+    books = db.relationship('Owned_Book',
                                backref='shelf',
                                lazy='dynamic',
                                cascade="all, delete")

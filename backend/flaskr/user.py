@@ -6,6 +6,11 @@ import base64
 from .room import Room
 from .transaction import Transaction
 from .review import Review
+from .book import Owned_Book
+from sqlalchemy import text, create_engine
+from sqlalchemy.engine.base import Connection
+
+engine = create_engine("postgresql://banana_books_user:p5KDYaDuvdp5rwHoVyO9bkH2uXkSedzB@dpg-cgljb682qv24jlvodv40-a.frankfurt-postgres.render.com/banana_books")
 
 class Permissions(enum.Enum):
     not_verified = 1
@@ -87,3 +92,15 @@ class User(db.Model):
         with open(self.avatar, "rb") as image_file:
             encoded_avatar = str(base64.b64encode(image_file.read()))
         return encoded_avatar
+
+    def get_book_info(self):
+        testlist = []
+        sql = text("""SELECT book_id FROM books B JOIN shelves S ON B.shelf_id = S.shelf_id 
+        JOIN rooms R ON S.room_id = R.room_id
+        JOIN users U ON R.owner_id = U.id WHERE U.id = """ + str(self.id))
+        with engine.connect() as con:
+            result = con.execute(sql)
+            for row in result:
+                testlist += row
+                print (row)
+        return testlist

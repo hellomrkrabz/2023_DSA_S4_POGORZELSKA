@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios'
 import Navbar from "../components/Navbar";
-import Book from "../components/Book";
-import TextField from "@mui/material/TextField"
 import { styled, alpha } from '@mui/material/styles';
-import { v4 } from "uuid";
 import InputBase from '@mui/material/InputBase';
 import BookGrid from "../components/BookGrid";
 import banana from "../media/banana.png";
 import AddBookComponent from "../components/AddBookComponent";
+import loading from "../media/loading.gif"
+import { GoogleBooksAPI } from "google-books-js";
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -58,27 +58,36 @@ function Library(props) {
     const [isOffered, setIsOffered] = useState(props.mode==="addoffered" && props.type==="personal" ? true : false)
     const [filter, setFilter] = useState({title:"", author:"", language:"", publisher:"", ISBN:""})
 
-    const [book, setBook] = useState({title:"Instytut", author:"Stephen King", isOffered:true, link:"https://ih1.redbubble.net/image.450886651.0130/poster,504x498,f8f8f8-pad,600x600,f8f8f8.u8.jpg", src:"https://www.gloskultury.pl/wp-content/uploads/2019/07/Instytut.jpg"})
-    const testBook = {title:"test", author:"test1", isOffered:false, link:"https://ih1.redbubble.net/image.450886651.0130/poster,504x498,f8f8f8-pad,600x600,f8f8f8.u8.jpg", src:"https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/512x512/banana.png"}
-    const test2Book = {title:"test", author:"test2", isOffered:true, link:"https://ih1.redbubble.net/image.450886651.0130/poster,504x498,f8f8f8-pad,600x600,f8f8f8.u8.jpg", src:"https://static.vecteezy.com/system/resources/thumbnails/007/839/785/small/cute-monkey-holding-banana-cartoon-icon-illustration-animal-food-icon-concept-isolated-premium-flat-cartoon-style-vector.jpg"}
-
-    const [books,setBooks] = useState([book,book,book,book,book,testBook,book,book,book,book,book,book,book,book,book,book,book,book,book,book,book,testBook,book,book,book,book,book,book,book,testBook,book,testBook,book,book,book,book,book,book,book,testBook,testBook,test2Book,book,book,book,book,book,book,book,book,book,testBook,testBook,book,book,book,book,book,book,book,book,test2Book,book,testBook,book,book,book,book,book,book,book,testBook,book,book,book,testBook,book,book,book,book,book,testBook,book,book,book,book,book,book,book,testBook,test2Book,testBook,book,book,book,book,book,testBook,test2Book,testBook,book,book,book,testBook,test2Book])
+    const [bookIds, setBookIds] = useState(["_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ",])
+    var emptyBook = {title:"title", authors:["author"], imageLinks:{smallThumbnail: loading}}
+    const [books, setBooks] = useState([emptyBook,emptyBook,emptyBook,emptyBook,emptyBook,emptyBook])
+    
     const [filteredBooks, setFilteredBooks] = useState([])
     const [booksToDisplay, setBooksTodisplay] = useState([])
     const [pageNumber, setPageNumber] = useState(0)
 
     useEffect(() => {
-        // axios.post("http://localhost:5000/user_validation/logout", {
-        //     key: sessionUserKey,
-        // })
+        axios.get("http://localhost:5000/api/user_info/test").then((response) => {
 
-        // if(props.type==="personal")
-        //     console.log(personal)
-        // else if(props.type==="wanted")
-        //     console.log(wanted)
-
-        filterBooks(books,filter)
+            //set bookIds here
+        }).then(()=>{
+            runFetch(bookIds,filter)
+        })
     }, []);
+
+    var runFetch = async (idArr,filter) => {
+        const googleBooksApi = new GoogleBooksAPI();
+        var fetchedB = [];
+    
+        for(let i = 0; i < idArr.length; i++){
+            const rawResponse = await googleBooksApi.getVolume(idArr[i]);
+            
+            fetchedB.push(rawResponse.volumeInfo);
+            filterBooks(fetchedB,filter);
+        }
+        
+        setBooks(fetchedB)
+    } 
 
     useEffect(() => {
         let noe=24;
@@ -95,24 +104,22 @@ function Library(props) {
         const ISBNFilter = new RegExp(f.ISBN, 'i');
         const offeredFilter = new RegExp(offered, 'i');
 
-        
-
         if(offered)
         {
             var result = boo
-            .filter(b => titleFilter.exec(b.title))
-            .filter(b => authorFilter.exec(b.author))
-            .filter(b => languageFilter.exec(b.language))
-            .filter(b => publisherFilter.exec(b.publisher))
-            .filter(b => ISBNFilter.exec(b.ISBN))
-            .filter(b => offeredFilter.exec(b.isOffered))
+            .filter(b => titleFilter.exec(b.title ?? ""))
+            .filter(b => authorFilter.exec(b.authors[0] ?? ""))
+            .filter(b => languageFilter.exec(b.language ?? ""))
+            .filter(b => publisherFilter.exec(b.publisher ?? ""))
+            .filter(b => ISBNFilter.exec(b.ISBN ?? ""))
+            .filter(b => offeredFilter.exec(b.isOffered ?? ""))
         }else{
             var result = boo
-            .filter(b => titleFilter.exec(b.title))
-            .filter(b => authorFilter.exec(b.author))
-            .filter(b => languageFilter.exec(b.language))
-            .filter(b => publisherFilter.exec(b.publisher))
-            .filter(b => ISBNFilter.exec(b.ISBN))
+            .filter(b => titleFilter.exec(b.title ?? ""))
+            .filter(b => authorFilter.exec(b.authors[0] ?? ""))
+            .filter(b => languageFilter.exec(b.language ?? ""))
+            .filter(b => publisherFilter.exec(b.publisher ?? ""))
+            .filter(b => ISBNFilter.exec(b.ISBN ?? ""))
         }
         setFilteredBooks(result)
         setPageNumber(0)
@@ -129,19 +136,19 @@ function Library(props) {
         <>
             <Navbar site={props.site} username={props.username}></Navbar>
             
-            <div className="container-fluid">
+            <div className="container-fluid d-flex flex-column flex-grow-1">
                 {props.type==="personal" && addPersonalBook &&//personal
                     <AddBookComponent type="personal" offered={isOffered}/>
                 }
                 {props.type==="personal" && !addPersonalBook &&
-                    <div className="row">
-                        <div className="col-9 bg-light">
+                    <div className="row flex-grow-1">
+                        <div className="col-xl-9 col-12 order-2 order-xl-1 bg-light">
                             <p>Personal Library</p>
                             <div className="row">                                
                                 <BookGrid books={booksToDisplay}></BookGrid>
                             </div>
                         </div>
-                        <div className="col-3 bg-banana-blue bg-opacity-25">
+                        <div className="col-12 col-xl-3 order-1 bg-banana-blue bg-opacity-25 d-flex flex-column">
                             <Search className="mt-4">
                                 <SearchIconWrapper>
                                     <img src={banana} height="30px"/>
@@ -193,19 +200,23 @@ function Library(props) {
                                 } }}/>
                             </Search>
                         
-                        <button className="col-12 btn btn-banana-primary-dark" onClick={()=>{ filterBooks(books,filter)  }}>Search</button>
-                        <button className="btn btn-banana-primary-dark" onClick={()=>{
-                            if(pageNumber>0)
-                            {
-                                setPageNumber(pageNumber-1)
-                            }
-                        }}>Prev</button>
-                        <button className="btn btn-banana-primary-dark" onClick={()=>{
-                            if(pageNumber < (filteredBooks.length/24) -1)
-                            {
-                                setPageNumber(pageNumber+1)
-                            }
-                        }}>Next</button>
+                            <div className="p-2 justify-content-between d-flex flex-column flex-grow-1">
+                                <button className="col-12 btn btn-banana-primary-dark" onClick={()=>{ filterBooks(books,filter)  }}>Search</button>
+                                <div className="align-self-stretch mt-4">
+                                    <button className="btn btn-banana-primary-dark col-5" onClick={()=>{
+                                        if(pageNumber>0)
+                                        {
+                                            setPageNumber(pageNumber-1)
+                                        }
+                                    }}>Prev</button>
+                                    <button className="btn btn-banana-primary-dark col-5 offset-2" onClick={()=>{
+                                        if(pageNumber < (filteredBooks.length/24) -1)
+                                        {
+                                            setPageNumber(pageNumber+1)
+                                        }
+                                    }}>Next</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -214,14 +225,14 @@ function Library(props) {
                     <AddBookComponent type="wanted"/>
                 }
                 {props.type==="wanted" && !addWantedBook &&
-                    <div className="row">
-                    <div className="col-9 bg-light">
+                    <div className="row flex-grow-1">
+                    <div className="col-xl-9 col-12 order-2 order-xl-1 bg-light">
                         <p>Wanted Library</p>
                         <div className="row">                                
                             <BookGrid books={booksToDisplay}></BookGrid>
                         </div>
                     </div>
-                    <div className="col-3 bg-primary">
+                    <div className="col-12 col-xl-3 order-1 bg-banana-blue bg-opacity-25 d-flex flex-column">
                         <Search className="mt-4">
                             <SearchIconWrapper>
                                 <img src={banana} height="30px"/>
@@ -273,19 +284,23 @@ function Library(props) {
                             } }}/>
                         </Search>
                     
-                    <button className="col-12" onClick={()=>{ filterBooks(books,filter)  }}>Search</button>
-                    <button onClick={()=>{
-                        if(pageNumber>0)
-                        {
-                            setPageNumber(pageNumber-1)
-                        }
-                    }}>Prev</button>
-                    <button onClick={()=>{
-                        if(pageNumber < (filteredBooks.length/24) -1)
-                        {
-                            setPageNumber(pageNumber+1)
-                        }
-                    }}>Next</button>
+                        <div className="p-2 justify-content-between d-flex flex-column flex-grow-1">
+                                <button className="col-12 btn btn-banana-primary-dark" onClick={()=>{ filterBooks(books,filter)  }}>Search</button>
+                                <div className="align-self-stretch mt-4">
+                                    <button className="btn btn-banana-primary-dark col-5" onClick={()=>{
+                                        if(pageNumber>0)
+                                        {
+                                            setPageNumber(pageNumber-1)
+                                        }
+                                    }}>Prev</button>
+                                    <button className="btn btn-banana-primary-dark col-5 offset-2" onClick={()=>{
+                                        if(pageNumber < (filteredBooks.length/24) -1)
+                                        {
+                                            setPageNumber(pageNumber+1)
+                                        }
+                                    }}>Next</button>
+                                </div>
+                            </div>
                     </div>
                 </div>
                 }

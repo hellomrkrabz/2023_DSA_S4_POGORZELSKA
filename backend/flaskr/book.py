@@ -11,7 +11,7 @@ class States(enum.Enum):
     fair = 5
     poor = 6
 
-class Book(db.Model):
+class Owned_Book(db.Model):
     __tablename__ = 'books'
     book_id = db.Column(db.Integer, primary_key=True)
     google_book_id = db.Column(db.String(15))
@@ -30,4 +30,19 @@ class Book(db.Model):
         return self.book_state
 
     def get_rentable(self):
+        return self.rentable
+
+    def get_shelf_id(self):
         return self.shelf_id
+
+class Wanted_Book(db.Model):
+    __tablename__ = 'wanted_books'
+    book_id = db.Column(db.Integer, primary_key=True)
+    google_book_id = db.Column(db.String(15))
+
+
+    def get_book_id(self):
+        return self.book_id
+
+    def get_google_book_id(self):
+        return self.google_book_id

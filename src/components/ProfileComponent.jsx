@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import ProfileBookList from "./ProfileBookList";
 import ProfileOpinionsList from "./ProfileOpinionsList";
 import ProfileInfoComponent from "./ProfileInfoComponent";
@@ -15,10 +15,10 @@ function ProfileComponent(props) {
                 
                 <div className="col-9 mt-5">
 
-                    <ProfileBookList title={"Wanted Books"} moreLink={"/WantedLibrary"} addLink={"/WantedLibrary/Add"} isLoggedIn={props.isLoggedIn}></ProfileBookList>
-                    <ProfileBookList title={"Offered Books"} moreLink={"/PersonalLibrary/Offered"} addLink={"/PersonalLibrary/AddOffered"} isLoggedIn={props.isLoggedIn}></ProfileBookList>
+                    <ProfileBookList books={props.books} title={"Wanted Books"} moreLink={"/WantedLibrary"} addLink={"/WantedLibrary/Add"} isLoggedIn={props.isLoggedIn}></ProfileBookList>
+                    <ProfileBookList books={props.books} title={"Offered Books"} moreLink={"/PersonalLibrary/Offered"} addLink={"/PersonalLibrary/AddOffered"} isLoggedIn={props.isLoggedIn}></ProfileBookList>
                     {props.isLoggedIn &&
-                        <ProfileBookList title={"Personal Library"} moreLink={"/PersonalLibrary"} addLink={"/PersonalLibrary/Add"} isLoggedIn={props.isLoggedIn}></ProfileBookList>
+                        <ProfileBookList books={props.books} title={"Personal Library"} moreLink={"/PersonalLibrary"} addLink={"/PersonalLibrary/Add"} isLoggedIn={props.isLoggedIn}></ProfileBookList>
                     }
                     
 
