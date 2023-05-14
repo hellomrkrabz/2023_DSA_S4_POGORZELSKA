@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Response
 from .book import Owned_Book
 from .book import Wanted_Book
 from .user import User
@@ -7,9 +7,11 @@ from .room import Room
 from .review import Review
 from .transaction import Transaction
 from . import db
-
+import json
 
 bp = Blueprint("api", __name__, url_prefix='/api')
+
+#---------------------info about books---------------------------
 
 @bp.route('/owned_book_info', methods=['GET'])
 def get_books():
@@ -48,7 +50,9 @@ def get_book_info_test(u_id):
                         'author': book.get_author(),
                         'title': book.get_title()
                     })
-    return jsonify({'msg': 'Specified book does not exist:('})
+    return jsonify({'msg': 'No books?:('})
+
+#---------------------info about users---------------------------
 
 @bp.route('/user_info', methods=['GET'])
 def get_users():
@@ -109,11 +113,81 @@ def get_user_by_username(username):
         }
     return jsonify({'user': user_json})
 
+#---------------------info about rooms & shelves---------------------------
+
+@bp.route('/owned_rooms/<username>', methods=['GET'])
+def get_owned_rooms(username):
+    user = User.query.filter_by(username=username).first()
+    if user is not None:
+        list = user.get_room_info()
+        room_list = []
+        if list is not None:
+            print(list)
+            for room_id in list:
+                print('rum: '+str(room_id))
+                room = Room.query.filter_by(room_id=room_id).first()
+                room_list.append(room)
+            room_json = [{
+                'id': r.get_id(),
+                'name': r.get_room_name(),
+                'owner': r.get_owner_id()
+            } for r in room_list]
+            return jsonify({'rooms': room_json})
+    return jsonify({'msg': 'No rooms?:('})
+
+@bp.route('/get_rooms', methods=['GET'])
+def get_rooms():
+    rooms = Room.query.all()
+    print(rooms)
+    rooms_json = [{
+        'id': r.get_id(),
+        'name': r.get_room_name(),
+        'owner': r.get_owner_id()
+    }for r in rooms]
+
+    return jsonify({'rooms': rooms_json})
+
+
+@bp.route('/owned_shelves/<username>', methods=['GET'])
+def get_owned_shelves(username):
+    user = User.query.filter_by(username=username).first()
+    if user is not None:
+        input_list = user.get_shelf_info()
+        shelf_list = []
+        if input_list is not None:
+            print(input_list)
+            for shelf_id in input_list:
+                print('elf on a: '+str(shelf_id))
+                shelf = Shelf.query.filter_by(shelf_id=shelf_id).first()
+                shelf_list.append(shelf)
+            shelf_json = [{
+                'id': s.get_id(),
+                'name': s.get_shelf_name(),
+                'room': s.get_room_id()
+            } for s in shelf_list]
+            return jsonify({'shelves': shelf_json})
+    return jsonify({'msg': 'No shelves?:('})
+
+@bp.route('/get_shelves', methods=['GET'])
+def get_shelves():
+    shelves = Shelf.query.all()
+    print(shelves)
+    shelves_json = [{
+        'id': s.get_id(),
+        'name': s.get_shelf_name(),
+        'room': s.get_room_id()
+    }for s in shelves]
+
+    return jsonify({'shelves': shelves_json})
+
+#---------------------adding things---------------------------
+
 @bp.route('/<entity_type>/<action>', methods=['POST'])
 def add_or_edit_entity(entity_type, action):
     data = request.get_json()
     entity_type = str(entity_type)
     entity = None
+    user = User.query.filter_by(key=data['user_key']).first()
 
     try:
         if entity_type == 'owned_book':
@@ -160,7 +234,8 @@ def add_or_edit_entity(entity_type, action):
 
         elif entity_type == 'room':
             room_name = data['room_name']
-            owner_id = data['owner_id']
+            user = User.query.filter_by(key=data['user_key']).first()
+            owner_id = user.id
 
             if action == "add":
                 entity = Room(

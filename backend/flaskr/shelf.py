@@ -13,7 +13,7 @@ class Shelf(db.Model):
                                lazy='dynamic',
                                cascade="all, delete")
 
-    def get_shelf_id(self):
+    def get_id(self):
         return self.shelf_id
 
     def get_shelf_name(self):

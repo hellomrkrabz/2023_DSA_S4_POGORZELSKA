@@ -54,6 +54,8 @@ function Navbar(props) {
             }
             {props.site == "/Reports" &&
                 <>
+                    <a className="btn btn-banana-white-outline" href={"/Transactions"}>Transactions</a>
+                    <a className="btn btn-banana-white-outline" href={"/Profile/" + props.username}>My Profile</a>
                     <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
                 </>
             }

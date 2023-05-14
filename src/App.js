@@ -62,7 +62,7 @@ function App() {
       },
       {
         path: '/Reports',
-        element: <Reports/>,
+        element: <Reports username={sessionUsername}/>,
       },
       {
         path: '/Opinions/:username',

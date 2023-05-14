@@ -45,7 +45,7 @@ function Register() {
                         <div><TextField id="email" fullWidth label={"Email"} type={'email'} onChange={(e) => { setEmail(e.target.value) }}/></div>
                         <div><TextField id="username" fullWidth label={"Username"} type={'text'} onChange={(e) => { setUsername(e.target.value) }} /></div>
                         <div><TextField id="password" fullWidth label={"Password"} type={'password'} onChange={(e) => { setPassword(e.target.value) }} /></div>
-                        <div><TextField id="password_confirm" fullWidth label={"Confirm_password"} type={'password'} onChange={(e) => { setConfirmPassword(e.target.value) }} /></div>
+                        <div><TextField id="password_confirm" fullWidth label={"Confirm password"} type={'password'} onChange={(e) => { setConfirmPassword(e.target.value) }} /></div>
                         <div> <button className="btn btn-banana-primary col-12" onClick={() => { submit() }} id="submit" name="submit">Submit</button> </div>
                         <Popup open={openPopup} position="right center" contentStyle={popupStyle} overlayStyle={popupStyle} arrowStyle={popupStyle} closeOnDocumentClick onClose={() => { setOpenPopup(false) } }>  <span> { popupMessage } </span></Popup>
                 </div>

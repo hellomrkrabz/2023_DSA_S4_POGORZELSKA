@@ -11,20 +11,46 @@ class States(enum.Enum):
     fair = 5
     poor = 6
 
-class Owned_Book(db.Model):
+class Book(db.Model):
     __tablename__ = 'books'
     book_id = db.Column(db.Integer, primary_key=True)
-    google_book_id = db.Column(db.String(15))
-    book_state = db.Column(db.Enum(States))
-    rentable = db.Column(db.Boolean)
-    shelf_id = db.Column(db.Integer, db.ForeignKey('shelves.shelf_id'))
+    google_book_id = db.Column(db.String(30))
+    isbn = db.Column(db.String(15))
+    title = db.Column(db.String(120))
+    wanted_books = db.relationship('Wanted_Book',
+                            backref='foreign_book',
+                            lazy='dynamic',
+                            cascade="all, delete")
+    owned_books = db.relationship('Owned_Book',
+                            backref='book',
+                            lazy='dynamic',
+                            cascade="all, delete")
 
-
-    def get_book_id(self):
+    def get_id(self):
         return self.book_id
 
     def get_google_book_id(self):
         return self.google_book_id
+
+    def get_isbn(self):
+        return self.isbn
+
+    def get_title(self):
+        return self.title
+
+class Owned_Book(db.Model):
+    __tablename__ = 'owned_books'
+    owned_book_id = db.Column(db.Integer, primary_key=True)
+    book_state = db.Column(db.Enum(States))
+    rentable = db.Column(db.Boolean)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    shelf_id = db.Column(db.Integer, db.ForeignKey('shelves.shelf_id'))
+    book_id = db.Column(db.Integer, db.ForeignKey('books.book_id'))
+
+
+
+    def get_id(self):
+        return self.owned_book_id
 
     def get_book_state(self):
         return self.book_state
@@ -37,12 +63,16 @@ class Owned_Book(db.Model):
 
 class Wanted_Book(db.Model):
     __tablename__ = 'wanted_books'
-    book_id = db.Column(db.Integer, primary_key=True)
-    google_book_id = db.Column(db.String(15))
+    wanted_book_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    foreign_book_id = db.Column(db.Integer, db.ForeignKey('books.book_id'))
 
 
-    def get_book_id(self):
-        return self.book_id
+    def get_id(self):
+        return self.wanted_book_id
 
-    def get_google_book_id(self):
-        return self.google_book_id
+    def get_user_id(self):
+        return self.user_id
+
+    def get_foreign_book_id(self):
+        return self.foreign_book_id

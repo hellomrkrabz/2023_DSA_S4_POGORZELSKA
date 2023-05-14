@@ -9,3 +9,4 @@ werkzeug
 sqlalchemy_utils
 flask_mail
 beautifulsoup4
+sqlalchemy

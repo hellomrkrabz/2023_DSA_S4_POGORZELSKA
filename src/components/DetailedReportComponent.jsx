@@ -8,11 +8,6 @@ function DetailedReportComponent(props) {
     const [openPopup, setOpenPopup] = useState(false);
     const [popupType, setPopupType] = useState("")
 
-
-    // useEffect(() => {
-    //     console.log(openPopup)
-    //     console.log(popupType)
-    // }, [openPopup,popupType]);
     return (
         <>
             <div className="row col-8 bg-light border border-dark mt-3 container-fluid d-flex flex-column align-items-center">
@@ -90,6 +85,9 @@ function DetailedReportComponent(props) {
                                 setOpenPopup(true)
                             }}
                             >Ignore User</button>
+                        <button className="col-5 btn btn-banana-primary ms-3 align-self-center" onClick={()=>{
+                            props.setDisplayDetails(false)
+                            }}>Back</button>
                     </div>
                     <Popup open={openPopup} onClose={() => { setOpenPopup(false) }}>
                         <div>

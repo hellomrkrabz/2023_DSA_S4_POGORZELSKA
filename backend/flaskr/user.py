@@ -3,11 +3,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy_utils import EmailType
 import enum
 import base64
+from datetime import datetime
 from .room import Room
 from .transaction import Transaction
 from .review import Review
 from .book import Owned_Book
-from sqlalchemy import text, create_engine
+from .book import Wanted_Book
+from sqlalchemy import text, create_engine, ForeignKey
 from sqlalchemy.engine.base import Connection
 
 engine = create_engine("postgresql://banana_books_user:p5KDYaDuvdp5rwHoVyO9bkH2uXkSedzB@dpg-cgljb682qv24jlvodv40-a.frankfurt-postgres.render.com/banana_books")
@@ -32,19 +34,21 @@ class User(db.Model):
     permissions = db.Column(db.Enum(Permissions))
     verificationHash = db.Column(db.String(128))
     key = db.Column(db.String(128))
-    #user_rating = db.Column(Review.get_average_rating(id))
-    rooms = db.relationship('Room',
-                               backref='owner',
-                               lazy='dynamic',
-                               cascade="all, delete")
+    key_expiration_date = db.Column(db.DateTime)
+    user_rating = db.Column(db.Float)
     transactions = db.relationship('Transaction',
                                backref='borrower',
                                lazy='dynamic',
                                cascade="all, delete")
-    reviews = db.relationship('Review',
-                               backref='borrower',
-                               lazy='dynamic',
-                               cascade="all, delete")
+    owned_book = db.relationship('Owned_Book',
+                            backref='owner',
+                            lazy='dynamic',
+                            cascade="all, delete")
+    wanted_book = db.relationship('Wanted_Book',
+                            backref='user',
+                            lazy='dynamic',
+                            cascade="all, delete")
+
 
     def verify_password(self, password) -> bool:
         return check_password_hash(self.password, password)
@@ -88,6 +92,9 @@ class User(db.Model):
     def get_details(self):
         return self.details
 
+    def get_key_expiration_date(self):
+        return self.key_expiration_date
+
     def encode_avatar(self):
         with open(self.avatar, "rb") as image_file:
             encoded_avatar = str(base64.b64encode(image_file.read()))
@@ -96,6 +103,30 @@ class User(db.Model):
     def get_book_info(self):
         testlist = []
         sql = text("""SELECT book_id FROM books B JOIN shelves S ON B.shelf_id = S.shelf_id 
+        JOIN rooms R ON S.room_id = R.room_id
+        JOIN users U ON R.owner_id = U.id WHERE U.id = """ + str(self.id))
+        with engine.connect() as con:
+            result = con.execute(sql)
+            for row in result:
+                testlist += row
+                print (row)
+        return testlist
+
+    def get_room_info(self):
+        testlist = []
+        sql = text("""SELECT room_id FROM rooms R
+        JOIN users U ON R.owner_id = U.id 
+        WHERE U.id = """ + str(self.id))
+        with engine.connect() as con:
+            result = con.execute(sql)
+            for row in result:
+                testlist += row
+                print (row)
+        return testlist
+
+    def get_shelf_info(self):
+        testlist = []
+        sql = text("""SELECT shelf_id FROM shelves S
         JOIN rooms R ON S.room_id = R.room_id
         JOIN users U ON R.owner_id = U.id WHERE U.id = """ + str(self.id))
         with engine.connect() as con:
