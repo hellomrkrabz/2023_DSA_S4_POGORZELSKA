@@ -2,6 +2,8 @@ from flask import Flask, request
 import psycopg2
 from . import db
 import enum
+import base64
+import json
 
 class States(enum.Enum):
     mint = 1
@@ -17,6 +19,8 @@ class Book(db.Model):
     google_book_id = db.Column(db.String(30))
     isbn = db.Column(db.String(15))
     title = db.Column(db.String(120))
+    author = db.Column(db.String(120))
+    cover_photo = db.Column(db.String(300))
     wanted_books = db.relationship('Wanted_Book',
                             backref='foreign_book',
                             lazy='dynamic',
@@ -38,6 +42,12 @@ class Book(db.Model):
     def get_title(self):
         return self.title
 
+    def get_author(self):
+        return self.author
+
+    def get_cover_photo(self):
+        return self.cover_photo
+
 class Owned_Book(db.Model):
     __tablename__ = 'owned_books'
     owned_book_id = db.Column(db.Integer, primary_key=True)
@@ -53,13 +63,19 @@ class Owned_Book(db.Model):
         return self.owned_book_id
 
     def get_book_state(self):
-        return self.book_state
+        return self.book_state.value
 
     def get_rentable(self):
         return self.rentable
 
     def get_shelf_id(self):
         return self.shelf_id
+
+    def get_owner_id(self):
+        return self.owner_id
+
+    def get_book_id(self):
+        return self.book_id
 
 class Wanted_Book(db.Model):
     __tablename__ = 'wanted_books'

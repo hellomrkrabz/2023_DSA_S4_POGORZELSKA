@@ -1,13 +1,14 @@
 import React from "react";
 import ScoreComponnent from "./ScoreComponent";
 import TextField from "@mui/material/TextField"
+import loading from "../media/loading.gif"
 
 function ProfileInfoComponent(props) {
 
   return (
     <>
         <div style={{aspectRatio: "1/1"}}>
-            <img className="rounded-circle col-12 border border-5 border-banana-blue mt-1" src={props.avatar} style={{width: "100%",height:"100%", objectFit: "cover"}} alt="monke"/> 
+            <img className="rounded-circle col-12 border border-5 border-banana-blue mt-1" src={props.avatar ?? loading} style={{width: "100%",height:"100%", objectFit: "cover"}}/> 
         </div>
         <div className="fw-normal fs-3 text-shadow-light">{props.username}</div>
         <div className="mt-3">
@@ -24,7 +25,7 @@ function ProfileInfoComponent(props) {
                 disabled
                 id="bio"
                 label="Bio"
-                value={props.details}
+                value={props.details ?? ""}
                 multiline
                 rows={6}
                 fullWidth

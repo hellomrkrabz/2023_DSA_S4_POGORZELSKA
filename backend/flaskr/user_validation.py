@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash
 import json
 import re
 from .email_sender import send_mail_with_msg, send_mail_with_html, send_mail_from_html_file
-from .html_proccesors import html_attr_inputter,attr_input_args
+from .html_proccesors import html_attr_inputter_by_id, attr_input_args_id, html_inner_inputter_by_id ,inner_html_input_args_id
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
 import secrets
@@ -53,10 +53,14 @@ def Register():
         db.session.commit()
         print(f"User sold data to us without knowing:)")
 
-        inputter_args = attr_input_args("a",0,"href","http://localhost:3000/AccountVerification/"+user.verificationHash)#FORGOR
-        url_inputter = html_attr_inputter(inputter_args)
+        attr_inputter_args = attr_input_args_id("activation-link","href","http://localhost:3000/AccountVerification/"+user.verificationHash)
+        inner_html_inputter_args = inner_html_input_args_id("username",username)
 
-        send_mail_from_html_file(email, "Banana books account verification", "email_confirmation.html",url_inputter) 
+        inputter_list = []
+        inputter_list.append(html_attr_inputter_by_id(attr_inputter_args))
+        inputter_list.append(html_inner_inputter_by_id(inner_html_inputter_args))
+
+        send_mail_from_html_file(email, "Banana books account verification", "email_confirmation.html", inputter_list) 
         
         return jsonify({"msg": "Successfully registered. Check your email and activate your account! :)"})
     except Exception as e:
@@ -65,6 +69,8 @@ def Register():
             error = "E-mail is already taken"
         elif 'Daily user sending quota exceeded' in error:
             error = "Internal error"
+        elif '"users_username_key" DETAIL: Key (username)=' in error:
+            error = "Username taken"
         else:
             print('[ERROR] ::', error)
         return jsonify({"msg": error})

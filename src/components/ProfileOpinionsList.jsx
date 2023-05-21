@@ -39,7 +39,7 @@ function ProfileOpinionsList(props) {
 
             <div className="align-self-center col-3 col-xl-2">
                 <Link to={props.moreLink}>
-                    <button className="btn btn-banana-primary col-12">See more 3</button>
+                    <button className="btn btn-banana-primary col-12">See more</button>
                 </Link>
             </div>
         </div>

@@ -58,37 +58,66 @@ function Library(props) {
     const [isOffered, setIsOffered] = useState(props.mode==="addoffered" && props.type==="personal" ? true : false)
     const [filter, setFilter] = useState({title:"", author:"", language:"", publisher:"", ISBN:""})
 
-    const [bookIds, setBookIds] = useState(["_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ","_ojXNuzgHRcC","SDepCQAAQBAJ","xOFLAAAAcAAJ","c3tZAAAAMAAJ","Z7GfEAAAQBAJ","zYx2PQAACAAJ",])
+    const [bookIds, setBookIds] = useState([])
     var emptyBook = {title:"title", authors:["author"], imageLinks:{smallThumbnail: loading}}
-    const [books, setBooks] = useState([emptyBook,emptyBook,emptyBook,emptyBook,emptyBook,emptyBook])
+    const [books, setBooks] = useState([])
     
     const [filteredBooks, setFilteredBooks] = useState([])
     const [booksToDisplay, setBooksTodisplay] = useState([])
     const [pageNumber, setPageNumber] = useState(0)
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/user_info/test").then((response) => {
+        if(props.type==="personal")
+        {
+            axios.get("http://localhost:5000/api/owned_book_info").then((response) => {
+                
+                setBookIds(response.data.books)
+            })
+        }else if(props.type==="wanted")
+        {
+            axios.get("http://localhost:5000/api/wanted_book_info").then((response) => {
 
-            //set bookIds here
-        }).then(()=>{
-            runFetch(bookIds,filter)
-        })
+                setBookIds(response.data.books)
+            })
+        }
     }, []);
 
-    var runFetch = async (idArr,filter) => {
-        const googleBooksApi = new GoogleBooksAPI();
-        var fetchedB = [];
-    
-        for(let i = 0; i < idArr.length; i++){
-            ///const rawResponse = await googleBooksApi.getVolume(idArr[i]);
-            const rawResponse = await axios.get("https://www.googleapis.com/books/v1/volumes/"+idArr[i])
-            //console.log(rawResponse.data)
-            fetchedB.push(rawResponse.data.volumeInfo);
-            filterBooks(fetchedB,filter);
+    useEffect(()=>{
+        if(bookIds!==undefined && bookIds.length > 0)
+        {
+            var fetchedBooks = []
+            for(let i = 0; i < bookIds.length; i++){
+
+                axios.get("http://localhost:5000/api/book_info/" + bookIds[i].book_id).then((response)=>{
+                    fetchedBooks.push(response.data)
+                })
+
+                if(i === bookIds.length - 1)
+                {
+                    setTimeout(function() {
+                        let fbTMP = []
+
+                        for(let i = 0; i < bookIds.length; i++)
+                        {
+                            let tmp= {
+                                author: fetchedBooks[i].author,
+                                book_id: fetchedBooks[i].book_id,
+                                cover_photo: fetchedBooks[i].cover_photo,
+                                google_book_id: fetchedBooks[i].google_book_id,
+                                isbn: fetchedBooks[i].isbn,
+                                title: fetchedBooks[i].title,
+                                rentable: bookIds[i].rentable
+                            }
+                            fbTMP.push(tmp)
+                        }
+                        setBooks(fbTMP)
+                        filterBooks(fbTMP, filter)
+                    }, 1000);
+                }
+            }
+
         }
-        
-        setBooks(fetchedB)
-    } 
+    },[bookIds])
 
     useEffect(() => {
         let noe=24;
@@ -107,31 +136,25 @@ function Library(props) {
 
         if(offered)
         {
+            console.log(boo)
             var result = boo
             .filter(b => titleFilter.exec(b.title ?? ""))
-            .filter(b => authorFilter.exec(b.authors[0] ?? ""))
-            .filter(b => languageFilter.exec(b.language ?? ""))
-            .filter(b => publisherFilter.exec(b.publisher ?? ""))
-            .filter(b => ISBNFilter.exec(b.ISBN ?? ""))
-            .filter(b => offeredFilter.exec(b.isOffered ?? ""))
+            .filter(b => authorFilter.exec(b.author ?? ""))
+            //.filter(b => languageFilter.exec(b.language ?? ""))
+            //.filter(b => publisherFilter.exec(b.publisher ?? ""))
+            .filter(b => ISBNFilter.exec(b.isbn ?? ""))
+            .filter(b => offeredFilter.exec(b.rentable ?? ""))
         }else{
             var result = boo
             .filter(b => titleFilter.exec(b.title ?? ""))
-            .filter(b => authorFilter.exec(b.authors[0] ?? ""))
-            .filter(b => languageFilter.exec(b.language ?? ""))
-            .filter(b => publisherFilter.exec(b.publisher ?? ""))
+            .filter(b => authorFilter.exec(b.author ?? ""))
+            //.filter(b => languageFilter.exec(b.language ?? ""))
+            //.filter(b => publisherFilter.exec(b.publisher ?? ""))
             .filter(b => ISBNFilter.exec(b.ISBN ?? ""))
         }
         setFilteredBooks(result)
         setPageNumber(0)
     }
-
-    // useEffect(() => {
-    //     console.log("o")
-    //     console.log(offered)
-    //     console.log("io")
-    //     console.log(isOffered)
-    // }, [offered,isOffered]);
 
     return (
         <>

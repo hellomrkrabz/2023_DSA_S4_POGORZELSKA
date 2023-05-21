@@ -9,8 +9,8 @@ from .transaction import Transaction
 from .review import Review
 from .book import Owned_Book
 from .book import Wanted_Book
+from .report import Report
 from sqlalchemy import text, create_engine, ForeignKey
-from sqlalchemy.engine.base import Connection
 
 engine = create_engine("postgresql://banana_books_user:p5KDYaDuvdp5rwHoVyO9bkH2uXkSedzB@dpg-cgljb682qv24jlvodv40-a.frankfurt-postgres.render.com/banana_books")
 
@@ -35,7 +35,6 @@ class User(db.Model):
     verificationHash = db.Column(db.String(128))
     key = db.Column(db.String(128))
     key_expiration_date = db.Column(db.DateTime)
-    user_rating = db.Column(db.Float)
     transactions = db.relationship('Transaction',
                                backref='borrower',
                                lazy='dynamic',
@@ -121,7 +120,6 @@ class User(db.Model):
             result = con.execute(sql)
             for row in result:
                 testlist += row
-                print (row)
         return testlist
 
     def get_shelf_info(self):
@@ -133,5 +131,12 @@ class User(db.Model):
             result = con.execute(sql)
             for row in result:
                 testlist += row
-                print (row)
         return testlist
+
+    def get_user_rating(self):
+        sql = text("""SELECT AVG(rating) FROM reviews r
+        WHERE r.borrower_id = """ + str(self.id))
+        with engine.connect() as con:
+            result = con.execute(sql).scalar()
+        return result
+

@@ -9,7 +9,7 @@ function ProfileBookList(props) {
 
     var emptyBook = {title:"title", authors:["author"], imageLinks:{smallThumbnail: loading}}
     
-    const [books, setBooks] = useState([emptyBook,emptyBook,emptyBook,emptyBook,emptyBook,emptyBook])
+    const [books, setBooks] = useState([emptyBook])
 
     useEffect(() => {
         if(props.books!==undefined)
@@ -51,7 +51,7 @@ function ProfileBookList(props) {
                             </Link>
                     }
                     <Link to={props.moreLink}>
-                        <button className="btn btn-banana-primary col-12 mt-2">See more 1</button>
+                        <button className="btn btn-banana-primary col-12 mt-2">See more</button>
                     </Link>
             </div>
         </div>

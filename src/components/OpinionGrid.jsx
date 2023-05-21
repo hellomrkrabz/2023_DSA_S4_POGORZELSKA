@@ -6,9 +6,12 @@ function OpinionGrid(props)
     return(
         <>
             <div className="container-fluid">
-                <div className="row row-cols-1 row-cols-md-4  row-cols-xl-6 row-cols-xxl-8 gy-3">
+                <div className="row row-cols-1 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5 gy-3 gx-4 mt-2">
                     {props.opinions.map((o)=>
-                        <OpinionComponent details={o} setDetails={props.setDetails} setDisplayDetails={props.setDisplayDetails} key={v4()} />
+                    <div key={v4()}>
+                        <OpinionComponent details={o} setDetails={props.setDetails} setDisplayDetails={props.setDisplayDetails} />
+                    </div>
+                        
                     )}
                 </div>
             </div>

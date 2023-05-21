@@ -12,11 +12,11 @@ mail = Mail()
 
 #for dropping db with cascade
 
-#from sqlalchemy.schema import DropTable
-#from sqlalchemy.ext.compiler import compiles
+# from sqlalchemy.schema import DropTable
+# from sqlalchemy.ext.compiler import compiles
 
-#@compiles(DropTable, "postgresql")
-#def _compile_drop_table(element, compiler, **kwargs):
+# @compiles(DropTable, "postgresql")
+# def _compile_drop_table(element, compiler, **kwargs):
 #    return compiler.visit_drop_table(element) + " CASCADE"
 
 
@@ -73,6 +73,7 @@ def create_app(test_config=None):
     app.config['MAIL_PASSWORD'] = 'wfvqdpjysvtdfqvt'
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USE_SSL'] = False
+    app.config['MAIL_DEBUG'] = False
 
     mail = Mail(app)
 

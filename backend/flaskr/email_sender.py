@@ -19,9 +19,10 @@ def send_mail_from_html_file(target_email, title, filename, html_proccesor_insta
     html_file = open('../src/email_htmls/'+filename, 'r')
     html_string = html_file.read()
 
-    if issubclass(type(html_proccesor_instace), html_proccesor):
-        print("Performing html processing")
-        html_string = html_proccesor_instace.procces_html(html_string)
+    for procesor in html_proccesor_instace:
+        if issubclass(type(procesor), html_proccesor):
+            print("Performing html processing")
+            html_string = procesor.procces_html(html_string)
 
     msg = Message(title, recipients = [target_email])
     msg.html = html_string

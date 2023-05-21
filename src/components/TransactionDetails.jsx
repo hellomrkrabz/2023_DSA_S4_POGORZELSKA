@@ -5,8 +5,23 @@ import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField"
 
 
+
 function TransactionDetails(props) {
-    //Matix we� to wyd�u� i popraw ksi��ke �eby nie by�o tego widma pls <3
+    const [transactionId, setTransactionID] = useState(props.transactionID);
+    const [username, setUsername] = useState(props.user);
+    const [title, setTitle] = useState(props.title);
+    const [author, setAuthor] = useState(props.author);
+    const [isbn, setIsbn] = useState(props.isbn);
+    const [reservationDate, setReservationDate] = useState(props.reservationDate);
+    const [rentDate, setRentDate] = useState(props.rentDate);
+    const [returnDate, setReturnDate] = useState(props.returnDate);
+    const [condition, setCondition] = useState(props.condition);
+    const [status, setStatus] = useState(props.status);
+    const [book, setBook] = useState(props.book);
+    const [coverPhoto, setCoverPhoto] = useState(props.coverPhoto);
+
+
+
     return (
         <>  
             <br></br>
@@ -17,10 +32,10 @@ function TransactionDetails(props) {
                             Transaction Details:
                         </div>
                         <div className="fw-normal fs-5 text-shadow-light mb-2">
-                            Username: PLACEHOLDER
+                            Username: {username}
                         </div>
                         <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mb-2">
-                            <Book variant="transactionDetails" {...props.book} key={v4()}> </Book>
+                            <Book variant="transactionDetails" author={author} cover_photo={coverPhoto} title={title} key={book}> </Book>
                         </div>
                         <div className="col-12 col-sm-6 col-lg-4 fw-normal fs-5 text-shadow-light">
                             <div className="mb-2">
@@ -31,7 +46,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="title"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={title}
                                 />
                             </div>
                             <div className="mb-2">
@@ -42,7 +57,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="author"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={author}
                                 />
                             </div>
                             <div className="mb-2">
@@ -53,7 +68,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="isbn"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={isbn}
                                 />
                             </div>                         
                             <div className="mb-2">
@@ -64,7 +79,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="bookCondition"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={condition}
                                 />
                             </div>
                         </div>
@@ -77,7 +92,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="reservationDate"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={reservationDate}
                                 />
                             </div>
                             <div className="mb-2">
@@ -88,7 +103,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="rentDate"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={rentDate}
                                 />
                             </div>
                             <div className="mb-2">
@@ -99,7 +114,7 @@ function TransactionDetails(props) {
                                     disabled
                                     id="returnDate"
                                     fullWidth
-                                    value="PLACEHOLDER"
+                                    value={returnDate}
                                 />
                             </div>
                             <div className="col-12 mb-2">
@@ -108,7 +123,7 @@ function TransactionDetails(props) {
                                     </div>
                                 <div className="d-flex align-items-center justify-content-center bg-secondary text-black p-3 rounded">
 
-                                    PLACEHOLDER
+                                    {status}
                                 </div>
                         </div>
                         </div>

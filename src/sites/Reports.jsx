@@ -47,7 +47,7 @@ function Reports(props) {
             </>
             :
             <>
-                <div className="container-fluid d-flex flex-column align-items-center bg-primary">
+                <div className="container-fluid d-flex flex-column align-items-center">
                     <DetailedReportComponent setDisplayDetails={setDisplayDetails} {...report}/>
                 </div>
             </>
