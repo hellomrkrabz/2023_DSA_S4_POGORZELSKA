@@ -2,7 +2,9 @@ from flask import Flask, request
 import psycopg2
 from . import db
 from datetime import datetime
+from sqlalchemy import text, create_engine, ForeignKey
 
+engine = create_engine("postgresql://banana_books_user:p5KDYaDuvdp5rwHoVyO9bkH2uXkSedzB@dpg-cgljb682qv24jlvodv40-a.frankfurt-postgres.render.com/banana_books")
 class Report(db.Model):
     __tablename__ = 'reports'
     report_id = db.Column(db.Integer, primary_key=True)
@@ -34,4 +36,12 @@ class Report(db.Model):
         return self.status
 
     def get_repoter_id(self):
+
         return self.reporter_id
+
+    def get_opinion_info(self):
+        sql = text("""SELECT O.content FROM reviews O JOIN reports R 
+        WHERE O.review_id = """ + str(self.opinion_id))
+        with engine.connect() as con:
+            result = con.execute(sql)
+        return result

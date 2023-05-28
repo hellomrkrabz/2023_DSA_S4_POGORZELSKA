@@ -26,7 +26,9 @@ function Login() {
             {
                 sessionStorage.setItem("sessionUserUsername", response.data.username);
                 sessionStorage.setItem("sessionUserKey", response.data.key);
-                window.location.replace("/Profile/"+response.data.username)
+                sessionStorage.setItem("sessionPermissions", response.data.permissions);
+                //window.location.replace("/Profile/"+response.data.username)
+                window.location.replace("/")
             }
         });
     }

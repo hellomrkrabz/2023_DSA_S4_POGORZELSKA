@@ -456,7 +456,24 @@ var runFetch = async (filter) => {
                                     room:selectedRoom,
                                     rentable:isOffered,
                                     book_state:condition
+                                }).then(()=>{
+                                    let tmp=props.books
+                                    tmp.push({user_key:sessionUserKey,
+                                        cover_photo:book.src,
+                                        book_id:-1,
+                                        google_book_id:book.googleId,
+                                        title:book.title,
+                                        author:book.author,
+                                        isbn:book.ISBN,
+                                        shelf_id:selectedShelf,
+                                        room:selectedRoom,
+                                        rentable:isOffered,
+                                        book_state:condition
+                                    })
+                                    props.setBooks(tmp)
+                                    props.filterBooks(tmp, props.filter)
                                 })
+
                                 props.setAddPersonalBook(false)
                             }else if(props.type==="wanted")
                             {
@@ -467,6 +484,25 @@ var runFetch = async (filter) => {
                                     room:selectedRoom,
                                     rentable:isOffered,
                                     book_state:condition
+                                }).then(()=>{
+                                    let tmp=props.books
+                                    tmp.push({user_key:sessionUserKey,
+                                        cover_photo:book.src,
+                                        book_id:-1,
+                                        google_book_id:book.googleId,
+                                        title:book.title,
+                                        author:book.author,
+                                        isbn:book.ISBN,
+                                        shelf_id:selectedShelf,
+                                        room:selectedRoom,
+                                        rentable:isOffered,
+                                        book_state:condition
+                                    })
+
+                                    console.log(tmp)
+
+                                    props.setBooks(tmp)
+                                    props.filterBooks(tmp, props.filter)
                                 })
                                 props.setAddWantedBook(false)
                             }

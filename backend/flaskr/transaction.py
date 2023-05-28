@@ -20,19 +20,21 @@ engine = create_engine("postgresql://banana_books_user:p5KDYaDuvdp5rwHoVyO9bkH2u
 class StatesForTransactions(enum.Enum):
     reservation = 1
     accepted_reservation = 2
-    passed_down = 3
-    lent = 4
-    returned = 5
-    cancelled = 6
-    successfully_finished = 7
-    unsuccessfully_finished = 8
+    your_turn = 3
+    accepted_date = 4
+    passed_down = 5
+    lent = 6
+    returned = 7
+    cancelled = 8
+    successfully_finished = 9
+    unsuccessfully_finished = 10
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'
     transaction_id = db.Column(db.Integer, primary_key=True)
     reservation_date = db.Column(db.DateTime, default=datetime.date)
-    rent_date = db.Column(db.DateTime, default=datetime.date)
-    return_date = db.Column(db.DateTime, default=datetime.date)
+    rent_date = db.Column(db.DateTime, default=datetime.date, nullable = True)
+    return_date = db.Column(db.DateTime, default=datetime.date, nullable = True)
     state = db.Column(db.Enum(StatesForTransactions))
     book_id = db.Column(db.Integer, db.ForeignKey('shelves.shelf_id'))
     borrower_id = db.Column(db.Integer, db.ForeignKey('users.id'))

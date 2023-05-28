@@ -105,7 +105,7 @@ def login():
         db.session.commit()
         print("[INFO]", f"User id: {user.get_id()}")
 
-        resp = jsonify({'user_id': user.get_id(), 'username': user.get_username(), 'key': user.get_key(), 'msg': 'Logged in'})
+        resp = jsonify({'user_id': user.get_id(), 'username': user.get_username(), 'permissions': user.get_permissions().value, 'key': user.get_key(), 'msg': 'Logged in'})
 
         response = make_response(resp)
         response.headers['Access-Control-Allow-Credentials'] = True
@@ -124,3 +124,13 @@ def logout():
     session.clear()
     return True
     #return redirect("http://www.google.com")
+
+@bp.route('/change_user/<username>', methods=['POST'])
+def change_user(username):
+    data = request.get_json()
+    permissions = data['permissions']
+    user = User.query.filter_by(username=username).first()
+    if user is not None:
+        user.permissions = permissions
+        db.session.commit()
+    return jsonify({"msg": "Successfully changed permissions"})

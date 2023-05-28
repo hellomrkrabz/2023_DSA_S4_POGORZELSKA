@@ -11,13 +11,16 @@ import Library from "./sites/Library.jsx";
 import Transactions from './sites/Transactions.jsx';
 import Reports from './sites/Reports.jsx'
 import Opinions from "./sites/Opinions.jsx";
+import Help from "./sites/Help.jsx";
+import Offers from "./sites/Offers.jsx";
 
-var sessionUserKey= sessionStorage.getItem("sessionUserKey")
-var sessionUsername= sessionStorage.getItem("sessionUserUsername")
+var sessionUserKey = sessionStorage.getItem("sessionUserKey")
+var sessionUsername = sessionStorage.getItem("sessionUserUsername")
+var sessionUserPermissions = sessionStorage.getItem("sessionPermissions")
 
 function App() {
 
-  if(sessionUserKey!==null)
+  if(sessionUserKey!==null && sessionUserPermissions !== 5 && sessionUserPermissions !== 3)
   {//logged in
     var routes = [
       {
@@ -57,8 +60,40 @@ function App() {
         element: <Library type="wanted" mode="add" site="/Library" username={sessionUsername}/>,
       },
       {
+        path: '/Offers',
+        element: <Offers type="personal" site="/Library" username={sessionUsername}/>,
+      },
+      {
         path: '/Transactions',
         element: <Transactions site="/Transactions" username={sessionUsername} />,
+      },
+      {
+        path: '/Reports',
+        element: <Reports username={sessionUsername}/>,
+      },
+      {
+        path: '/Opinions/:username',
+        element: <Opinions username={sessionUsername}/>,
+      },
+      {
+        path: '/Help',
+        element: <Help isLoggedIn={true} username={sessionUsername}/>,
+      },
+      {
+        path: '*',
+        navigate: "/",
+      },
+    ];
+  }else if(sessionUserKey!==null && sessionUserPermissions === 3)
+  {//logged in admin
+    var routes = [
+      {
+        path: '/',
+        element: <FrontPage isLoggedIn={true} username={sessionUsername}/>,
+      },
+      {
+        path: '/Logout',
+        element: <Logout />,
       },
       {
         path: '/Reports',
@@ -73,7 +108,8 @@ function App() {
         navigate: "/",
       },
     ];
-  }else
+  }
+  else
   {//not logged in
     var routes = [
       {

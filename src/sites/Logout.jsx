@@ -11,6 +11,7 @@ function Logout() {
         })
         sessionStorage.removeItem("sessionUserUsername")
         sessionStorage.removeItem("sessionUserKey")
+        sessionStorage.removeItem("sessionPermissions")
         window.location.replace("/")
     }, []);
 }

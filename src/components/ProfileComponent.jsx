@@ -3,22 +3,26 @@ import ProfileBookList from "./ProfileBookList";
 import ProfileOpinionsList from "./ProfileOpinionsList";
 import ProfileInfoComponent from "./ProfileInfoComponent";
 import loading from "../media/loading.gif"
+import trans from "../media/trans.png"
 import axios from "axios"
 
 
 function ProfileComponent(props) {
 
-    var emptyBook = {author: "Loading", book_id: -1, cover_photo: loading, google_book_id: "", isbn: "8375545252", title: "Zgorzkniala pizda"}
+    var loadingBook = {author: "Loading", book_id: -1, cover_photo: loading, google_book_id: "", isbn: "", title: "Loading"}
+    var emptyBook = {author: "", book_id: -1, cover_photo: trans, google_book_id: "", isbn: "", title: "Nothing here :("}
+
+    var username = sessionStorage.getItem("sessionUserUsername")
 
     const [personalBookIds, setPersonalBookIds] = useState([])
     const [wantedBookIds, setWantedBookIds] = useState([])
     const [offeredBookIds, setOfferedBookIds] = useState([])
-    const [personalBooks, setPersonalBooks] = useState([emptyBook, emptyBook])
-    const [wantedBooks, setWantedBooks] = useState([emptyBook, emptyBook])
-    const [offeredBooks, setOfferedBooks] = useState([emptyBook, emptyBook])
+    const [personalBooks, setPersonalBooks] = useState([loadingBook, loadingBook])
+    const [wantedBooks, setWantedBooks] = useState([loadingBook, loadingBook])
+    const [offeredBooks, setOfferedBooks] = useState([loadingBook, loadingBook])
 
     useEffect(()=>{
-        axios.get("http://localhost:5000/api/owned_book_info").then((response) => {
+        axios.get("http://localhost:5000/api/owned_book_user/"+username).then((response) => {
             //console.log(response.data.books)
             setPersonalBookIds(response.data.books)
             let booksIdTMP = []
@@ -29,7 +33,7 @@ function ProfileComponent(props) {
             //setBookIds(booksIdTMP)
         })
 
-        axios.get("http://localhost:5000/api/wanted_book_info").then((response) => {
+        axios.get("http://localhost:5000/api/wanted_book_user/"+username).then((response) => {
             //console.log(response.data.books)
             setWantedBookIds(response.data.books)
             let booksIdTMP = []
@@ -60,6 +64,10 @@ function ProfileComponent(props) {
                 setPersonalBooks(fetched)
                 setOfferedBooks(offeredTMP)
             }, 2000);
+        }else
+        {
+            setPersonalBooks([emptyBook])
+            setOfferedBooks([emptyBook])
         }
     },[personalBookIds])
 
@@ -75,6 +83,9 @@ function ProfileComponent(props) {
                 })
             }
             setTimeout(() => {setWantedBooks(fetched)}, 2000);
+        }else
+        {
+            setWantedBooks([emptyBook])
         }
     },[wantedBookIds])
 
@@ -97,7 +108,7 @@ function ProfileComponent(props) {
                     
 
                     <ProfileOpinionsList
-                        sender1={"JustAnormalUser"} text1={"not gut"} moreLink={"/Opinions"}
+                        sender1={"JustAnormalUser"} text1={"not gut"} moreLink={"/Opinions/" + window.location.pathname.split('/').pop() }
                         sender2={"AdiffrentUser"} text2={"it was great 2/10"} addLink={"/AddOpinion"}>
                     </ProfileOpinionsList>
                  </div>

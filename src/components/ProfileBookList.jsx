@@ -35,11 +35,11 @@ function ProfileBookList(props) {
     return (
     <>
         <div className="row">
-            <p>{props.title}</p>
+            <p className="fs-5 fw-semibold">{props.title}</p>
             <div className="d-flex justify-content-around col-9 col-xl-10">
                 <div className="row row-cols-sm-2 row-cols-xxl-6 row-cols-xl-3 gy-2 gx-2 row-cols-1 col-12">
 
-                    {books.map((b)=><Book variant="small" key={v4()} {...b}/>)}
+                    {books.map((b)=><Book variant="deprecatedSmall" key={v4()} {...b}/>)}
                 </div>
             </div>
 

@@ -89,7 +89,7 @@ function Opinions(props) {
     useEffect(() => {
         if(filteredOpinions!==undefined && filteredOpinions.length > 0)
         {
-            let noe=24;
+            let noe=20;
             let offset=pageNumber*noe;
             setOpinionsToDisplay(filteredOpinions.slice(offset,offset+noe))
         }
@@ -156,12 +156,12 @@ function Opinions(props) {
             <div>
                 <Navbar site={"/Opinions"} username={props.username}/>
             </div>
-            <div className="container-fluid">
-                <div className="row">
+            <div className="container-fluid h-100">
+                <div className="row h-100">
                         <div className="col-9">
                             <OpinionGrid opinions={opinionsToDisplay} setDetails={setDetails} setDisplayDetails={setDisplayDetails}/>
                         </div>
-                        <div className="col-3 bg-banana-blue bg-opacity-25 d-flex flex-column">
+                        <div className="col-3 bg-banana-blue bg-opacity-25 d-flex flex-column h-100">
                             <h3>{username}'s opinions</h3>
                             <div className="d-flex flex-column flex-grow-1">
                                 <Search>

@@ -11,8 +11,11 @@ function OpinionGrid(props)
                     <div key={v4()}>
                         <OpinionComponent details={o} setDetails={props.setDetails} setDisplayDetails={props.setDisplayDetails} />
                     </div>
-                        
                     )}
+
+                    {props.opinions.length === 0 &&
+                        <div>Nothing to see here</div>
+                    }
                 </div>
             </div>
             

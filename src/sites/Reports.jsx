@@ -13,14 +13,14 @@ function Reports(props) {
 
     useEffect(() => {
         
-        axios.get("http://localhost:5000/Reports/Where?")
+        axios.get("http://localhost:5000/api/reports")
         .then((response) => {
-           //setReports(response.data.reports)
+           setReport(response.data.reports)
         });
-        let report1={reportDate:"25.04.2023",reporter:"Butters1",reported:"cartman1", status:"pending",opinionDate:"20.04.2023",opinionContent:"2/10", reportContent:">:("}
-        let report2={reportDate:"26.04.2023",reporter:"Butters2",reported:"cartman2", status:"resolved",opinionDate:"21.04.2023",opinionContent:"1/10", reportContent:">>:("}
-        let report3={reportDate:"27.04.2023",reporter:"Butters3",reported:"cartman3", status:"pending",opinionDate:"22.04.2023",opinionContent:"-2/10", reportContent:">>>:("}
-        setReports([report1,report2,report3,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1])
+    //     let report1={reportDate:"25.04.2023",reporter:"Butters1",reported:"cartman1", status:"pending",opinionDate:"20.04.2023",opinionContent:"2/10", reportContent:">:("}
+    //     let report2={reportDate:"26.04.2023",reporter:"Butters2",reported:"cartman2", status:"resolved",opinionDate:"21.04.2023",opinionContent:"1/10", reportContent:">>:("}
+    //     let report3={reportDate:"27.04.2023",reporter:"Butters3",reported:"cartman3", status:"pending",opinionDate:"22.04.2023",opinionContent:"-2/10", reportContent:">>>:("}
+    //     setReports([report1,report2,report3,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1,report1])
     }, []);
 
     // useEffect(() => {
@@ -43,6 +43,9 @@ function Reports(props) {
                     </div>
 
                     {reports.map((r)=><ReportComponent report={{...r}} setDisplayDetails={setDisplayDetails} setReport={setReport} key={v4()}/>)}
+                    {reports.length===0 &&
+                        <div>Nothing here</div>
+                    }
                 </div>
             </>
             :

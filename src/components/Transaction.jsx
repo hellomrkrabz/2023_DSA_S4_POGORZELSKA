@@ -35,7 +35,7 @@ function Transaction(props) {
                         <div className="row col-10 border bg-banana-blue bg-opacity-25 border-dark justify-content-between card">  
                             <div className="card-body justify-content-between align-items-center row">
                                     <div className="col-2">
-                            <Book variant="small" author={author} cover_photo={coverPhoto} title={title} key={book}> </Book>
+                            <Book variant="deprecatedSmall" author={author} cover_photo={coverPhoto} title={title} key={book}> </Book>
                                     </div>
                                     <div className="col-6 fw-normal fs-4 text-shadow-light">
                                         <div>

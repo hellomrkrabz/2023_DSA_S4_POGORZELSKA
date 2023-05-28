@@ -5,15 +5,19 @@ function ProfileOpinionsList(props) {
 
   return (
     <>
-        <div className="mt-5 row">
-            <p>Opinions</p>
+        <div className="mt-5 row mb-5">
+            <p className="fs-5 fw-semibold">Opinions</p>
             <div className="col-9 col-xl-10">
                 <div className="row row-cols-1 row-cols-lg-2 gx-5 gy-2">
                     <div className="col">
                         <div className="card text-center ">
-                            <div className="card-header">
-                                {props.sender1} 
-                                <ScoreComponent score={1.4}></ScoreComponent>
+                            <div className="card-header d-flex justify-content-between align-items-center">
+                                <div className="fs-5 fw-semibold">
+                                    {props.sender1}
+                                </div>
+                                <div className="col-4">
+                                    <ScoreComponent score={1.4}></ScoreComponent>
+                                </div>
                             </div>
                             <div className="card-body">
                                 {props.text1}
@@ -23,9 +27,13 @@ function ProfileOpinionsList(props) {
 
                     <div className="col">
                         <div className="card text-center ">
-                            <div className="card-header">
-                                {props.sender2} 
-                                <ScoreComponent score={1.8}></ScoreComponent>
+                        <div className="card-header d-flex justify-content-between align-items-center">
+                                <div className="fs-5 fw-semibold">
+                                    {props.sender2}
+                                </div>
+                                <div className="col-4">
+                                    <ScoreComponent score={2.8}></ScoreComponent>
+                                </div>
                             </div>
                             <div className="card-body">
                                 {props.text2}

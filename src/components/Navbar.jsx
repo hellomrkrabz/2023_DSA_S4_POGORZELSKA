@@ -82,6 +82,23 @@ function Navbar(props) {
                 
              </>
             }
+            {props.site == "/Help" && 
+                <>
+                {props.isLoggedIn ?
+                <>
+                    <a className="btn btn-banana-white-outline" href={"/Transactions"}>Transactions</a>
+                    <a className="btn btn-banana-white-outline" href={"/Profile/" + props.username}>My Profile</a>
+                    <a className="btn btn-banana-white-outline" href="/Logout">Logout</a>
+                </>
+                :
+                <>
+                    <a className="btn btn-banana-white-outline" href="/Login">Login</a>
+                    <a className="btn btn-banana-white-outline" href="/Register">Sign Up</a>
+                </>
+                }
+                
+             </>
+            }
             </div>
 
         </div>

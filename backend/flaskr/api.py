@@ -10,8 +10,11 @@ from .transaction import Transaction
 from .report import Report
 from . import db
 import json
-
+from datetime import date
+import sqlalchemy
+from sqlalchemy import text, create_engine, ForeignKey
 bp = Blueprint("api", __name__, url_prefix='/api')
+engine = create_engine("postgresql://banana_books_user:p5KDYaDuvdp5rwHoVyO9bkH2uXkSedzB@dpg-cgljb682qv24jlvodv40-a.frankfurt-postgres.render.com/banana_books")
 
 #---------------------info about books---------------------------
 
@@ -79,21 +82,44 @@ def get_wanted_book_info(b_id):
         })
     return jsonify({'msg': 'Specified book does not exist:('})
 
-@bp.route('/owned_book_test/<u_id>', methods=['GET'])
-def get_book_info_test(u_id):
-    user = User.query.filter_by(id=u_id).first()
+@bp.route('/owned_book_user/<u_username>', methods=['GET'])
+def get_owned_book_info_username(u_username):
+    user = User.query.filter_by(username=u_username).first()
     if user is not None:
         list = user.get_book_info()
+        book_list = []
         if list is not None:
             for book_id in list:
                 book = Owned_Book.query.filter_by(book_id=book_id).first()
-                if book is not None:
-                    return jsonify({
-                        'book_id': book.get_id(),
-                        'author': book.get_author(),
-                        'title': book.get_title()
-                    })
-    return jsonify({'msg': 'No books?:('})
+                book_list.append(book)
+            book_json = [{
+                'owned_book_id': b.get_id(),
+                'book_state': b.get_book_state(),
+                'rentable': b.get_rentable(),
+                'owner_id': b.get_owner_id(),
+                'shelf_id': b.get_shelf_id(),
+                'book_id': b.get_book_id()
+            } for b in book_list]
+            return jsonify({'books': book_json})
+        return jsonify({'msg': 'No books?:('})
+
+@bp.route('/wanted_book_user/<u_username>', methods=['GET'])
+def get_wanted_book_info_username(u_username):
+    user = User.query.filter_by(username=u_username).first()
+    if user is not None:
+        list = user.get_wanted_book_info()
+        book_list = []
+        if list is not None:
+            for book_id in list:
+                book = Wanted_Book.query.filter_by(foreign_book_id=book_id).first()
+                book_list.append(book)
+            book_json = [{
+                'wanted_book_id': b.get_id(),
+                'owner': b.get_user_id(),
+                'book_id': b.get_foreign_book_id()
+            } for b in book_list]
+            return jsonify({'books': book_json})
+        return jsonify({'msg': 'No books?:('})
 
 #---------------------info about users---------------------------
 
@@ -227,8 +253,18 @@ def get_shelves():
 def get_user_transactions(username):
     user = User.query.filter_by(username=username).first()
     if user is not None:
-        transactions = Transaction.query.filter_by(borrower_id=user.id);
-        if transactions is not None:
+        transactions = Transaction.query.all()
+        print(transactions)
+        filtered_transactions = []
+        for t in transactions:
+            owned_book = Owned_Book.query.filter_by(owned_book_id=t.book_id).first()
+            if owned_book.owner_id == user.id:
+                print(t)
+                filtered_transactions.append(t)
+
+        filtered_transactions_2 = Transaction.query.filter_by(borrower_id=user.id)
+        filtered_transactions += filtered_transactions_2
+        if filtered_transactions is not None:
             transactions_json = [{
                 'id': t.get_id(),
                 'reservation_date': t.get_reservation_date(),
@@ -238,9 +274,26 @@ def get_user_transactions(username):
                 'book_id': t.get_book_id(),
                 'borrower_id': t.get_borrower_id(),
                 'borrower_username': t.get_borrower_username()
-            } for t in transactions]
+            } for t in filtered_transactions]
             return jsonify({'transactions': transactions_json})
     return jsonify({'msg': 'it no good'})
+
+@bp.route('/transaction/<t_id>', methods=['GET'])
+def get_transaction_by_id(t_id):
+   transaction = Transaction.query.filter_by(transaction_id=t_id).first()
+   if transaction is not None:
+        transaction_json = {
+            'id': transaction.get_id(),
+            'reservation_date': transaction.get_reservation_date(),
+            'rent_date': transaction.get_rent_date(),
+            'return_date': transaction.get_return_date(),
+            'state': transaction.get_state().name,
+            'book_id': transaction.get_book_id(),
+            'borrower_id': transaction.get_borrower_id(),
+            'borrower_username': transaction.get_borrower_username()
+        }
+        return jsonify({'transaction': transaction_json})
+   return jsonify({'msg': 'it no good'})
 
 @bp.route('/transaction/<username>/<t_id>', methods=['GET'])
 def get_transaction(username, t_id):
@@ -297,7 +350,7 @@ def get_user_opinions(username):
 
 @bp.route('/opinions', methods=['GET'])
 def get_opinions():
-    opinions = Review.query.all();
+    opinions = Review.query.all()
     if opinions is not None:
         opinion_json = [{
             'user': o.get_renter_id(),
@@ -309,7 +362,38 @@ def get_opinions():
         return jsonify({'opinions': opinion_json})
     return jsonify({'msg': 'it no good'})
 
+#---------------------report stuff---------------------------
+@bp.route('/reports', methods=['GET'])
+def get_reports():
+    reports = Report.query.all()
+    if reports is not None:
+        report_json = [{
+            'reportDate': r.get_report_date(),
+            'reporter': r.get_reporter_id(),
+            'reported': r.get_reported_id(),
+            'status': r.get_status(),
+            'opinionDate': r.get_opinion_date(),
+            'opinionContent': r.get_opinion_info(),
+            'reportContent': r.get_content()
+        } for r in reports]
+        return jsonify({'reports': report_json})
+    return jsonify({'msg': 'it no good'})
 
+@bp.route('/filtered_reports', methods=['GET'])
+def get_filtered_reports():
+    reports = Report.query.filter_by(status='0')
+    if reports is not None:
+        report_json = [{
+            'reportDate': r.get_report_date(),
+            'reporter': r.get_reporter_id(),
+            'reported': r.get_reported_id(),
+            'status': r.get_status(),
+            'opinionDate': r.get_opinion_date(),
+            'opinionContent': r.get_opinion_info(),
+            'reportContent': r.get_content()
+        } for r in reports]
+        return jsonify({'reports': report_json})
+    return jsonify({'msg': 'it no good'})
 #---------------------adding things---------------------------
 
 @bp.route('/<entity_type>/<action>', methods=['POST'])
@@ -318,7 +402,7 @@ def add_or_edit_entity(entity_type, action):
     entity_type = str(entity_type)
     entity = None
     entity2 = None
-    user = User.query.filter_by(key=data['user_key']).first()
+    #user = User.query.filter_by(key=data['user_key']).first()
 
     try:
         if entity_type == 'owned_book':
@@ -460,12 +544,13 @@ def add_or_edit_entity(entity_type, action):
             return_date = data['return_date']
             book_id = data['book_id']
             state = data['state']
-            borrower_id = data['borrower_id']
+            user = User.query.filter_by(key=data['borrower_key']).first()
+            borrower_id = user.id
             if action == "add":
                 entity = Transaction(
-                    reservation_date=reservation_date,
-                    rent_date=rent_date,
-                    return_date=return_date,
+                    reservation_date=date.today(),
+                    rent_date=sqlalchemy.sql.null(),
+                    return_date=sqlalchemy.sql.null(),
                     state=state,
                     book_id=book_id,
                     borrower_id=borrower_id
@@ -511,3 +596,15 @@ def add_or_edit_entity(entity_type, action):
         error = str(e)
         print('[ERROR] :: Failed to add/edit post. Cause:', error)
         return jsonify({'msg': error})
+
+
+
+@bp.route('/return_books/', methods=['GET'])
+def get_all_books():
+    books = Book.query.all()
+    if books is not None:
+        books_json = [{
+            'book': b.get_title()
+        } for b in books]
+        return jsonify({'books': books_json})
+    return jsonify({'msg': 'no books?'})

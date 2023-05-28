@@ -9,7 +9,7 @@ function BookGrid(props)
             <div className="container-fluid">
                 <div className="row row-cols-1 row-cols-md-4  row-cols-xl-6 row-cols-xxl-8 gy-3">
                     {props.books.map((b)=>
-                        <Book variant="small" {...b} key={v4()}></Book>
+                        <Book variant={props.offers ? "small": "deprecatedSmall"} {...b} key={v4()}></Book>
                     )}
                 </div>
             </div>

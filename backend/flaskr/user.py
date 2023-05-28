@@ -101,14 +101,26 @@ class User(db.Model):
 
     def get_book_info(self):
         testlist = []
-        sql = text("""SELECT book_id FROM books B JOIN shelves S ON B.shelf_id = S.shelf_id 
+        sql = text("""SELECT B.book_id FROM books B JOIN owned_books O ON B.book_id = O.book_id
+        JOIN shelves S ON O.shelf_id = S.shelf_id 
         JOIN rooms R ON S.room_id = R.room_id
         JOIN users U ON R.owner_id = U.id WHERE U.id = """ + str(self.id))
         with engine.connect() as con:
             result = con.execute(sql)
             for row in result:
                 testlist += row
-                print (row)
+                print(row)
+        return testlist
+
+    def get_wanted_book_info(self):
+        testlist = []
+        sql = text("""SELECT B.book_id FROM books B JOIN wanted_books W ON B.book_id = W.foreign_book_id
+        JOIN users U ON W.user_id = U.id WHERE U.id = """ + str(self.id))
+        with engine.connect() as con:
+            result = con.execute(sql)
+            for row in result:
+                testlist += row
+                print(row)
         return testlist
 
     def get_room_info(self):

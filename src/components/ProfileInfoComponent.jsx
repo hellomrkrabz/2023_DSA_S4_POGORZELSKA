@@ -4,7 +4,6 @@ import TextField from "@mui/material/TextField"
 import loading from "../media/loading.gif"
 
 function ProfileInfoComponent(props) {
-
   return (
     <>
         <div style={{aspectRatio: "1/1"}}>
@@ -14,7 +13,7 @@ function ProfileInfoComponent(props) {
         <div className="mt-3">
             <div className="fw-bold">User rating</div>
             <div className="ms-5">
-                <ScoreComponnent score={props.rating}></ScoreComponnent>
+                <ScoreComponnent score={props.average_rating ? props.average_rating : 0}></ScoreComponnent>
             </div>
         </div>
 
