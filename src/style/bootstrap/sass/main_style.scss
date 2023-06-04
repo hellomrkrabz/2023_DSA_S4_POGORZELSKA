@@ -72,21 +72,34 @@ $grid-row-columns: 8;
 .text-bananablue {
 	color: $banana-blue;
 }
+.text-bananabluedark {
+	color: $banana-blue-dark;
+}
 
 //=================================================================================FRONTPAGE===============================================================================
 
 //Added due to VERI SMOL SIZES PROVIDED BY BOOTSTRAP, I HAD NO CLUE HOW TO DO IT ANOTHER WAY PLEASE DON'T SHOUT OUT ME IF YOU FIND THIS ONE D:
 
-.text-main-top {
+.text-top-logged {
 	font-size: 5.9vw;
 	width: 65vw;
 }
 
 //Same with this one :(
 
-.text-main-bot {
+.text-bot-logged {
 	font-size: 3vw;
 	width: 65vw;
+}
+
+.text-top-notlogged {
+	font-size: 4vw;
+}
+
+//Same with this one :(
+
+.text-bot-notlogged {
+	font-size: 2.7vw;
 }
 
 //=================================================================================CUSTOM ANIMATONS===========================================================================

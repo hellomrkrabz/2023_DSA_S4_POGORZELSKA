@@ -14,13 +14,15 @@ import Opinions from "./sites/Opinions.jsx";
 import Help from "./sites/Help.jsx";
 import Offers from "./sites/Offers.jsx";
 
-var sessionUserKey = sessionStorage.getItem("sessionUserKey")
 var sessionUsername = sessionStorage.getItem("sessionUserUsername")
 var sessionUserPermissions = sessionStorage.getItem("sessionPermissions")
+var sessionUserKey = sessionStorage.getItem("sessionUserKey")
+var sessionUserId = sessionStorage.getItem("sessionUserId")
 
 function App() {
 
-  if(sessionUserKey!==null && sessionUserPermissions !== 5 && sessionUserPermissions !== 3)
+
+  if(sessionUserKey!==undefined && (sessionUserPermissions === "2" || sessionUserPermissions === "4"))
   {//logged in
     var routes = [
       {
@@ -68,6 +70,10 @@ function App() {
         element: <Transactions site="/Transactions" username={sessionUsername} />,
       },
       {
+        path: '/Transactions/:t_id',
+        element: <Transactions site="/Transactions" username={sessionUsername} />,
+      },
+      {
         path: '/Reports',
         element: <Reports username={sessionUsername}/>,
       },
@@ -84,12 +90,16 @@ function App() {
         navigate: "/",
       },
     ];
-  }else if(sessionUserKey!==null && sessionUserPermissions === 3)
+  }else if(sessionUserKey!==null && sessionUserPermissions === "3")
   {//logged in admin
     var routes = [
+      // {
+      //   path: '/',
+      //   element: <FrontPage isLoggedIn={true} username={sessionUsername}/>,
+      // },
       {
-        path: '/',
-        element: <FrontPage isLoggedIn={true} username={sessionUsername}/>,
+        path: '*',
+        navigate: "/Reports",
       },
       {
         path: '/Logout',
@@ -105,7 +115,7 @@ function App() {
       },
       {
         path: '*',
-        navigate: "/",
+        navigate: "/Reports",
       },
     ];
   }

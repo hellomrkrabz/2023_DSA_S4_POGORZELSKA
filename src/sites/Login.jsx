@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField"
 import axios from 'axios'
 import Popup from 'reactjs-popup';
@@ -27,11 +27,18 @@ function Login() {
                 sessionStorage.setItem("sessionUserUsername", response.data.username);
                 sessionStorage.setItem("sessionUserKey", response.data.key);
                 sessionStorage.setItem("sessionPermissions", response.data.permissions);
+                sessionStorage.setItem("sessionUserId", response.data.user_id);
                 //window.location.replace("/Profile/"+response.data.username)
                 window.location.replace("/")
             }
         });
     }
+
+    // useEffect(()=>{
+    //     axios.post("http://localhost:5000/user_validation/change_user/Maryla", {
+    //         permissions: "admin"
+    //     })
+    // })
 
     return (
         <>

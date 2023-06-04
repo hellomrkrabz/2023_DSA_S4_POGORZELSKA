@@ -66,6 +66,9 @@ class html_attr_inputter_by_id(html_proccesor):
         soup = BeautifulSoup(html_string, 'html.parser')
         items = soup.find(id=self.args.search_id)
 
+        if items is None:
+            print("html element with such id could not be found")
+            return
         items.attrs[self.args.replace_attr] = self.args.target_value
 
         return(str(soup))

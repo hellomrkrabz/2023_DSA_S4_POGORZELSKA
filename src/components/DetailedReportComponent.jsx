@@ -44,11 +44,11 @@ function DetailedReportComponent(props) {
                     </div>
                     <div className="row container-fluid d-flex flex-column align-items-center">
                         <h4 className="col-6 fw-semibold">Report status</h4>
-                        {props.status==="pending" &&
-                            <div className="col-6 bg-warning rounded p-2 text-center fs-3">{props.status}</div>
+                        {!props.status &&
+                            <div className="col-6 bg-warning rounded p-2 text-center fs-3">Pending</div>
                         }
-                        {props.status==="resolved" &&
-                            <div className="col-6 bg-success rounded p-2 text-center fs-3">{props.status}</div>
+                        {props.status &&
+                            <div className="col-6 bg-success rounded p-2 text-center fs-3">Resolved</div>
                         }
                     </div>
                     <div className="row container-fluid d-flex flex-column align-items-center">
@@ -71,7 +71,7 @@ function DetailedReportComponent(props) {
                     </div>
                     
                         <div className="row container-fluid d-flex justify-content-center mt-3">
-                        {props.status==="pending" &&
+                        {!props.status &&
                             <>
                             <button className="col-3 btn btn-banana-primary"
                                 onClick={()=>{

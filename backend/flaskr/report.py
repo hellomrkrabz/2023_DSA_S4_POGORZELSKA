@@ -35,13 +35,27 @@ class Report(db.Model):
     def get_status(self):
         return self.status
 
-    def get_repoter_id(self):
+    def get_reporter_id(self):
+        return self.reporter_id
 
+    def get_reported_id(self):
+        return self.reported_id
+    
+    def get_id(self):
         return self.reporter_id
 
     def get_opinion_info(self):
         sql = text("""SELECT O.content FROM reviews O JOIN reports R 
-        WHERE O.review_id = """ + str(self.opinion_id))
+        ON O.review_id = """ + str(self.opinion_id))
         with engine.connect() as con:
             result = con.execute(sql)
-        return result
+            res = result.fetchone()[0]
+        return res
+    
+    def get_opinion_date(self):
+        sql = text("""SELECT O.date FROM reviews O JOIN reports R
+        ON O.review_id = """ + str(self.opinion_id))
+        with engine.connect() as con:
+            result = con.execute(sql)
+            res = result.fetchone()[0]
+        return res

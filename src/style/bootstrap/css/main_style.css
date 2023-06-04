@@ -38,6 +38,7 @@
   --bs-light: #f8f9fa;
   --bs-dark: #212529;
   --bs-banana-blue: #21c5bb;
+  --bs-banana-bluelight: #31d5cb;
   --bs-primary-rgb: 13, 110, 253;
   --bs-secondary-rgb: 108, 117, 125;
   --bs-success-rgb: 25, 135, 84;
@@ -4457,8 +4458,8 @@ textarea.form-control-lg {
   }
 }
 .accordion-button:not(.collapsed) {
-  color: var(--bs-accordion-active-color);
-  background-color: var(--bs-accordion-active-bg);
+  color: #000000;
+  background-color: var(--bs-banana-bluelight);
   box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
 }
 .accordion-button:not(.collapsed)::after {
@@ -4475,6 +4476,7 @@ textarea.form-control-lg {
   background-repeat: no-repeat;
   background-size: var(--bs-accordion-btn-icon-width);
   transition: var(--bs-accordion-btn-icon-transition);
+
 }
 @media (prefers-reduced-motion: reduce) {
   .accordion-button::after {
@@ -11021,14 +11023,26 @@ textarea.form-control-lg {
   color: #21c5bb;
 }
 
-.text-main-top {
+.text-bananabluedark {
+  color: #218481;
+}
+
+.text-top-logged {
   font-size: 5.9vw;
   width: 65vw;
 }
 
-.text-main-bot {
+.text-bot-logged {
   font-size: 3vw;
   width: 65vw;
+}
+
+.text-top-notlogged {
+  font-size: 4vw;
+}
+
+.text-bot-notlogged {
+  font-size: 2.7vw;
 }
 
 @keyframes fadeIn {

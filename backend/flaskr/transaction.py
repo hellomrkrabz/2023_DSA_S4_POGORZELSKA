@@ -21,13 +21,15 @@ class StatesForTransactions(enum.Enum):
     reservation = 1
     accepted_reservation = 2
     your_turn = 3
-    accepted_date = 4
-    passed_down = 5
-    lent = 6
-    returned = 7
-    cancelled = 8
-    successfully_finished = 9
-    unsuccessfully_finished = 10
+    dates_chosen = 4
+    dates_rejected = 5
+    accepted_date = 6
+    passed_down = 7
+    lent = 8
+    returned = 9
+    cancelled = 10
+    successfully_finished = 11
+    unsuccessfully_finished = 12
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'
@@ -36,7 +38,7 @@ class Transaction(db.Model):
     rent_date = db.Column(db.DateTime, default=datetime.date, nullable = True)
     return_date = db.Column(db.DateTime, default=datetime.date, nullable = True)
     state = db.Column(db.Enum(StatesForTransactions))
-    book_id = db.Column(db.Integer, db.ForeignKey('shelves.shelf_id'))
+    book_id = db.Column(db.Integer, db.ForeignKey('owned_books.owned_book_id'))
     borrower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def get_id(self):

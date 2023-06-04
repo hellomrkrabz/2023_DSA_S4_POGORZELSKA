@@ -15,7 +15,7 @@ function Reports(props) {
         
         axios.get("http://localhost:5000/api/reports")
         .then((response) => {
-           setReport(response.data.reports)
+           setReports(response.data.reports)
         });
     //     let report1={reportDate:"25.04.2023",reporter:"Butters1",reported:"cartman1", status:"pending",opinionDate:"20.04.2023",opinionContent:"2/10", reportContent:">:("}
     //     let report2={reportDate:"26.04.2023",reporter:"Butters2",reported:"cartman2", status:"resolved",opinionDate:"21.04.2023",opinionContent:"1/10", reportContent:">>:("}
@@ -38,7 +38,7 @@ function Reports(props) {
                     <div className="row row col-11 py-3">
                         <div className="col-3 fs-2">Date of report</div>
                         <div className="col-3 fs-2">Reporter</div>
-                        <div className="col-3 fs-2">Date of report</div>
+                        <div className="col-3 fs-2">Reported</div>
                         <div className="col-3 fs-2">Status</div>
                     </div>
 

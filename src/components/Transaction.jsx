@@ -56,7 +56,7 @@ function Transaction(props) {
                                             {status}
                                         </div>    
                                         <div className="col-6">
-                                            <button className="col-12 btn btn-banana-primary " onClick={() => { props.updateShowDetailsFromChildren(true); props.updateDetailsKey(props.transactionID); }}>Details</button>
+                                            <button className="col-12 btn btn-banana-primary " onClick={() => {props.updateShowDetailsFromChildren(true); props.updateDetailsKey(props.transactionID); }}>Details</button>
                                         </div>
                                     </div>
                             </div>                                              

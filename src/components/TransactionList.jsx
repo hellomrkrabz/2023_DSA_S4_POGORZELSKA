@@ -6,6 +6,9 @@ import TransactionDetails from "./TransactionDetails.jsx";
 import axios from 'axios'
 
 function TransactionList(props) {
+
+    const transactionID = window.location.pathname.split('/').pop();
+
   //temporary, books - taken from the db
     const [showDetails, setShowDetails] = useState(false);
 
@@ -19,21 +22,30 @@ function TransactionList(props) {
 
     const [transactions, setTransactions] = useState([]);
 
-    const [detailsUsername, setDetailsUsername] = useState("k");
-    const [detailsBook, setDetailsBook] = useState("1");
-    const [detailsReservationDate, setDetailsReservationDate] = useState("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-    const [detailsRentDate, setDetailsRentDate] = useState("k");
-    const [detailsStatus, setDetailsStatus] = useState("k");
-    const [detailsReturnDate, setDetailsReturnDate] = useState("k");
-    const [detailsTitle, setDetailsTitle] = useState("k");
-    const [detailsAuthor, setDetailsAuthor] = useState("k");
-    const [detailsCoverPhoto, setDetailsCoverPhoto] = useState("k");
-    const [detailsIsbn, setDetailsIsbn] = useState("k");
-    const [detailsCondition, setDetailsCondition] = useState("k");
-    //const [detailsIsFinished, setDetailsIsFinished] = useState((props.status === "finished" || props.status === "failed") ? true : false); //finished/failed do zmiany na faktyczne statusy - ¿eby pokazywac guzik do recenzji
+    const [detailsUsername, setDetailsUsername] = useState("");
+    const [detailsBook, setDetailsBook] = useState("");
+    const [detailsReservationDate, setDetailsReservationDate] = useState("");
+    const [detailsRentDate, setDetailsRentDate] = useState("");
+    const [detailsStatus, setDetailsStatus] = useState("");
+    const [detailsReturnDate, setDetailsReturnDate] = useState("");
+    const [detailsTitle, setDetailsTitle] = useState("");
+    const [detailsAuthor, setDetailsAuthor] = useState("");
+    const [detailsCoverPhoto, setDetailsCoverPhoto] = useState("");
+    const [detailsIsbn, setDetailsIsbn] = useState("");
+    const [detailsCondition, setDetailsCondition] = useState("");
+    const [borrowerId, setBorrowerId] = useState();
+    const [ownerId, setOwnerId] = useState();
+    //const [detailsIsFinished, setDetailsIsFinished] = useState((props.status === "finished" || props.status === "failed") ? true : false); //finished/failed do zmiany na faktyczne statusy - ï¿½eby pokazywac guzik do recenzji
 
     //Getting user's all transactions'
     useEffect(() => {
+
+        if(window.location.pathname.split('/').length === 3 && transactionID)
+        {
+            setShowDetails(true);
+            setDetailsKey(transactionID);
+            setShowDetails
+        }
         
         axios.get("http://localhost:5000/api/transactions/" + sessionUsername).then((response) => {
             var trans = response.data.transactions;
@@ -47,34 +59,34 @@ function TransactionList(props) {
 
     //Updating data from db whenever detailsKey changes
     useEffect(() => {
-        //console.log("GOT HERE!!!!!!")
         // Take all details for a transaction from db and assign them to appropriate hooks (axios)
 
-        //po klikniêciu show details detailskey == transaction.key
-        axios.get("http://localhost:5000/api/transaction/" + sessionUsername + "/" + detailsKey).then((response) => {
+        //po klikniï¿½ciu show details detailskey == transaction.key
+        axios.get("http://localhost:5000/api/transaction/" + detailsKey).then((response) => {
             
             var transactionJson = response.data; 
-            //console.log(transactionJson);
             if (transactionJson.msg === undefined) {
-
+                console.log(transactionJson.transaction)
                 setDetailsUsername(transactionJson.transaction.borrower_username);
-                setDetailsReservationDate((transactionJson.transaction.reservation_date).slice(0,-12));
-                setDetailsRentDate((transactionJson.transaction.rent_date).slice(0, -12));
-                setDetailsReturnDate((transactionJson.transaction.return_date).slice(0, -12));
+                setDetailsReservationDate(transactionJson.transaction.reservation_date ? (transactionJson.transaction.reservation_date).slice(0,-12) : "");
+                setDetailsRentDate(transactionJson.transaction.rent_date ? (transactionJson.transaction.rent_date).slice(0,-12) : "");
+                setDetailsReturnDate(transactionJson.transaction.return_date ? (transactionJson.transaction.return_date).slice(0,-12) : "");
                 setDetailsStatus(transactionJson.transaction.state);
                 setDetailsBook(transactionJson.transaction.book_id);
+                setBorrowerId(transactionJson.transaction.borrower_id);
+                setOwnerId(transactionJson.transaction.owner_id)
+                setDetailsCondition(transactionJson.transaction.condition); 
+                return(transactionJson.transaction.book_id)
                 
             }
-        }).then(() => {
-                axios.get("http://localhost:5000/api/book_info/" + detailsBook).then((response) => {
-                    //console.log(response.data);
+        }).then((book_id) => {
+                axios.get("http://localhost:5000/api/book_info/" + book_id).then((response) => {
 
                     var book_json = response.data;
                     setDetailsTitle(book_json.title);
                     setDetailsAuthor(book_json.author);
                     setDetailsCoverPhoto(book_json.cover_photo);
-                    setDetailsIsbn(book_json.isbn);
-                    setDetailsCondition(book_json.condition);                    
+                    setDetailsIsbn(book_json.isbn);                   
                 })            
         })
 
@@ -87,7 +99,7 @@ function TransactionList(props) {
             {
                 showDetails ?
                     <>
-                        <TransactionDetails key={v4()} detailsKey={detailsKey} title={detailsTitle} author={detailsAuthor} coverPhoto={detailsCoverPhoto} isbn={detailsIsbn} condition={detailsCondition} user={detailsUsername} reservationDate={detailsReservationDate} rentDate={detailsRentDate} returnDate={detailsReturnDate} status={detailsStatus} book={detailsBook} updateShowDetailsFromChildren={setShowDetails}> </TransactionDetails >
+                        <TransactionDetails key={v4()} detailsKey={detailsKey} title={detailsTitle} author={detailsAuthor} coverPhoto={detailsCoverPhoto} isbn={detailsIsbn} condition={detailsCondition} user={detailsUsername} reservationDate={detailsReservationDate} rentDate={detailsRentDate} returnDate={detailsReturnDate} status={detailsStatus} book={detailsBook} updateShowDetailsFromChildren={setShowDetails} borrowerId={borrowerId} ownerId={ownerId}> </TransactionDetails >
                     </>
                     :
                     <>

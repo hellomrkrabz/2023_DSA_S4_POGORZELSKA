@@ -4,6 +4,7 @@ from . import db
 import enum
 import base64
 import json
+from .transaction import Transaction
 
 class States(enum.Enum):
     mint = 1
@@ -56,6 +57,10 @@ class Owned_Book(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     shelf_id = db.Column(db.Integer, db.ForeignKey('shelves.shelf_id'))
     book_id = db.Column(db.Integer, db.ForeignKey('books.book_id'))
+    transactions = db.relationship('Transaction',
+                            backref='transaction',
+                            lazy='dynamic',
+                            cascade="all, delete")
 
 
 

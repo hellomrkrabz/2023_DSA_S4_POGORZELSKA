@@ -24,7 +24,6 @@ function Book(props) {
         {
             axios.get("http://localhost:5000/api/user/" + props.owner_id).then((response) => {
                 setOwnerInfo(response.data.user)
-                console.log(response.data.user)
             })
         }
     },[])
@@ -161,22 +160,27 @@ function Book(props) {
 
         {props.variant==="medium" &&
         <>
-            <div className={`col-12 flex-grow-1 ${props.border ? "border":""}` }>
-                {/* <img src={props.src} style={{width: '100%',}}/> */}
-                {props.cover_photo!=="notFound" ?
-                    <img src={props.cover_photo} style={{width: '100%',}}/>
-                    :
-                    <img src={banana} style={{width: '100%',}}/>
-                }
-                <p>{props.title}</p>
+            <div className={`col-12 d-flex flex-column justify-content-start align-items-center ${props.border ? "border":""}` }>
+                <div className="col-12" style={{aspectRatio: "1/1"}}>
+                    {props.cover_photo!=="notFound" ?
+                        <img src={props.cover_photo} alt="book" style={{width: "100%",height:"100%", objectFit: "cover"}}/>
+                        :
+                        <img src={banana} alt="book" style={{width: "100%",height:"100%", objectFit: "cover"}}/>
+                    }
+                </div>
 
-                {props.description}<br />
+                <div className="col-12 d-flex flex-column justify-content-end align-items-center flex-grow-1 mb-3 px-3">
+                    <div className="col-12 flex-grow-1 mb-2 text-break d-flex justify-content-center">{props.title}</div>
+                    {props.description}
+                    <div className="col-12 d-flex justify-content-center align-items-center">
+                        <button className="btn btn-banana-primary-dark col-12 col-md-8 col-lg-7 col-xxl-4"
+                            onClick={()=>{
+                                setDisplayDetails(true)
+                            }}
+                        >Details</button>
+                    </div>
 
-                <button className="btn btn-banana-primary-dark ms-2 mt-4"
-                    onClick={()=>{
-                        setDisplayDetails(true)
-                    }}
-                >Details</button>
+                </div>
 
                 <Popup 
                     open={displayDetails} 
