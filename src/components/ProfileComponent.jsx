@@ -5,6 +5,7 @@ import ProfileInfoComponent from "./ProfileInfoComponent";
 import loading from "../media/loading.gif"
 import trans from "../media/trans.png"
 import axios from "axios"
+import findCookie from "../scripts/findCookie";
 
 
 function ProfileComponent(props) {
@@ -12,7 +13,7 @@ function ProfileComponent(props) {
     var loadingBook = {author: "Loading", book_id: -1, cover_photo: loading, google_book_id: "", isbn: "", title: "Loading"}
     var emptyBook = {author: "", book_id: -1, cover_photo: trans, google_book_id: "", isbn: "", title: "Nothing here :("}
 
-    var username = sessionStorage.getItem("sessionUserUsername")
+    var username = findCookie("sessionUserUsername")
 
     const [personalBookIds, setPersonalBookIds] = useState([])
     const [wantedBookIds, setWantedBookIds] = useState([])

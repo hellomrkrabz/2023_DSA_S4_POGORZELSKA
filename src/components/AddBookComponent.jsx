@@ -14,9 +14,10 @@ import { v4 } from "uuid";
 import axios from "axios"
 import Book from "./Book";
 import SelectButBetter from 'react-select';
+import findCookie from "../scripts/findCookie";
 
-var sessionUserKey= sessionStorage.getItem("sessionUserKey")
-var sessionUsername= sessionStorage.getItem("sessionUserUsername")
+var sessionUserKey= findCookie("sessionUserKey")
+var sessionUsername= findCookie("sessionUserUsername")
 
 const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -280,39 +281,44 @@ var runFetch = async (filter) => {
                                     </Select>
                                 </FormControl>
                                 <Popup id="popupRoom" open={displayAddRoom} position="bottom" onClose={()=>setDisplayAddRoom(false)}>
-                                    <div>
+                                    <div className="d-flex flex-column align-items-center">
                                         <h2>Room Name</h2>
-                                        <Textfield 
-                                            required
-                                            label="Name"
-                                            value={newRoomName}
-                                            onChange={(e)=>{
-                                                setNewRoomName(e.target.value)
-                                            }}
-                                        />
-                                        <button onClick={()=>{
-                                            let roomsTmp = rooms
-                                            axios.post("http://localhost:5000/api/room/add", {
-                                                user_key:sessionUserKey,
-                                                room_name:newRoomName,
-                                            }).then((response) => {
-                                                if(response.data.msg==="success")
-                                                {
-                                                    roomsTmp.push({id:response.data.id, name:newRoomName})
-                                                    let roomsOptionsTmp = roomsOptions
-                                                    roomsOptionsTmp.push({label: newRoomName, id: response.data.id})
-                                                    setRoomsOptions(roomsOptionsTmp)
-                                                    setRooms(roomsTmp)
-                                                    setSelectedRoom(response.data.id)
-                                                    setSelectedRoomForShelf(roomsOptionsTmp[roomsOptionsTmp.length-1].id)
-                                                    console.log(roomsOptionsTmp.length-1)
-                                                    console.log(roomsOptionsTmp[roomsOptionsTmp.length-1])
-                                                }
-                                                setDisplayAddRoom(false)
-                                                setNewRoomName("")
-                                            })
-                                        }
-                                        }>Add Room</button>
+                                        <div className="col-8 d-flex flex-column align-items-center">
+                                            <Textfield 
+                                                required
+                                                label="Name"
+                                                fullWidth
+                                                value={newRoomName}
+                                                onChange={(e)=>{
+                                                    setNewRoomName(e.target.value)
+                                                }}
+                                            />
+                                            <button className="btn btn-banana-primary col-6 mt-4"
+                                            onClick={()=>{
+                                                let roomsTmp = rooms
+                                                axios.post("http://localhost:5000/api/room/add", {
+                                                    user_key:sessionUserKey,
+                                                    room_name:newRoomName,
+                                                }).then((response) => {
+                                                    if(response.data.msg==="success")
+                                                    {
+                                                        roomsTmp.push({id:response.data.id, name:newRoomName})
+                                                        let roomsOptionsTmp = roomsOptions
+                                                        roomsOptionsTmp.push({label: newRoomName, id: response.data.id})
+                                                        setRoomsOptions(roomsOptionsTmp)
+                                                        setRooms(roomsTmp)
+                                                        setSelectedRoom(response.data.id)
+                                                        setSelectedRoomForShelf(roomsOptionsTmp[roomsOptionsTmp.length-1].id)
+                                                        console.log(roomsOptionsTmp.length-1)
+                                                        console.log(roomsOptionsTmp[roomsOptionsTmp.length-1])
+                                                    }
+                                                    setDisplayAddRoom(false)
+                                                    setNewRoomName("")
+                                                })
+                                            }
+                                            }>Add Room</button>
+                                        </div>
+
                                     </div>
                                 </Popup>
                                 <div className="col-4 pe-0">
@@ -337,57 +343,65 @@ var runFetch = async (filter) => {
                                 </FormControl>
                                 <Popup id="popupShelf" open={displayAddShelf} position="bottom" onClose={(e)=>{setDisplayAddShelf(false)
                                     }}>
-                                    <h2>Room Name</h2>
-                                    <SelectButBetter
-                                        value={selectedRoomForShelf}
-                                        options={roomsOptions}
-                                        onChange={setSelectedRoomForShelf}
-                                    />
-                                    <h2>Shelf Name</h2>
-                                        <Textfield 
-                                            required
-                                            onChange={(e)=>{
-                                                setNewShelfName(e.target.value)
-                                            }}
+                                    <div className="d-flex justify-content-center">
+                                        <div className="col-10 d-flex flex-column align-items-center">
+                                        <h2>Room Name</h2>
+                                        <SelectButBetter
+                                            className="col-8"
+                                            value={selectedRoomForShelf}
+                                            options={roomsOptions}
+                                            onChange={setSelectedRoomForShelf}
                                         />
-                                    <button onClick={()=>{
-                                            axios.post("http://localhost:5000/api/shelf/add", {
-                                                user_key:sessionUserKey,
-                                                shelf_name:newshelfName,
-                                                room_id:selectedRoomForShelf.id
-                                            }).then((response) => {
-                                                if(response.data.msg==="success")
-                                                {
-                                                    let shelfsTmp = shelfs
-                                                    shelfsTmp.push({id:response.data.id, name:newshelfName, room: selectedRoomForShelf.id})
-                                                    setShelfs(shelfsTmp)
-                                                    setSelectedRoomForShelf(rooms[0].id)
-                                                    setSelectedRoom(selectedRoomForShelf.id)//rooms[0].id)
-                                                    
-                                                    if(rooms.length!==0)
+                                        <h2>Shelf Name</h2>
+                                            <Textfield 
+                                                required
+                                                fullWidth
+                                                onChange={(e)=>{
+                                                    setNewShelfName(e.target.value)
+                                                }}
+                                            />
+                                        <button className="btn btn-banana-primary mt-3"
+                                            onClick={()=>{
+                                                axios.post("http://localhost:5000/api/shelf/add", {
+                                                    user_key:sessionUserKey,
+                                                    shelf_name:newshelfName,
+                                                    room_id:selectedRoomForShelf.id
+                                                }).then((response) => {
+                                                    if(response.data.msg==="success")
                                                     {
-                                                        var shelfsToListTmp =[]
-                                                        for(let i=0; i<shelfs.length; i++)
+                                                        let shelfsTmp = shelfs
+                                                        shelfsTmp.push({id:response.data.id, name:newshelfName, room: selectedRoomForShelf.id})
+                                                        setShelfs(shelfsTmp)
+                                                        setSelectedRoomForShelf(rooms[0].id)
+                                                        setSelectedRoom(selectedRoomForShelf.id)//rooms[0].id)
+                                                        
+                                                        if(rooms.length!==0)
                                                         {
-                                                            if(shelfs[i].room===selectedRoom)
+                                                            var shelfsToListTmp =[]
+                                                            for(let i=0; i<shelfs.length; i++)
                                                             {
-                                                                shelfsToListTmp.push(shelfs[i])
+                                                                if(shelfs[i].room===selectedRoom)
+                                                                {
+                                                                    shelfsToListTmp.push(shelfs[i])
+                                                                }
                                                             }
-                                                        }
 
-                                                        if(shelfsToListTmp.length > 0)
-                                                        {
-                                                            setSelectedShelf(shelfsToListTmp[0].id)
-                                                        }
+                                                            if(shelfsToListTmp.length > 0)
+                                                            {
+                                                                setSelectedShelf(shelfsToListTmp[0].id)
+                                                            }
 
-                                                        setShelfsToList(shelfsToListTmp)
-                                                        }
-                                                }
-                                                setDisplayAddShelf(false)
-                                                setNewShelfName("")
-                                            })
-                                        }
-                                        }>Add shelf</button>
+                                                            setShelfsToList(shelfsToListTmp)
+                                                            }
+                                                    }
+                                                    setDisplayAddShelf(false)
+                                                    setNewShelfName("")
+                                                })
+                                            }
+                                            }>Add shelf</button>  
+                                        </div>
+
+                                    </div>
                                 </Popup>
                                 <div className="col-4 pe-0">
                                         <button className="col-12 btn btn-banana-primary h-100" onClick={()=>setDisplayAddShelf(true)}>Add New</button>

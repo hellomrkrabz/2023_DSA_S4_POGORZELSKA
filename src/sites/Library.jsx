@@ -8,6 +8,7 @@ import banana from "../media/banana.png";
 import AddBookComponent from "../components/AddBookComponent";
 import loading from "../media/loading.gif"
 import { GoogleBooksAPI } from "google-books-js";
+import findCookie from "../scripts/findCookie";
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -66,7 +67,7 @@ function Library(props) {
     const [booksToDisplay, setBooksTodisplay] = useState([])
     const [pageNumber, setPageNumber] = useState(0)
 
-    var sessionUsername= sessionStorage.getItem("sessionUserUsername")
+    var sessionUsername= findCookie("sessionUserUsername")
 
     useEffect(() => {
         if(props.type==="personal")

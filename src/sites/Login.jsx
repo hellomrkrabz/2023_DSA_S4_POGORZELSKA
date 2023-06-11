@@ -24,21 +24,19 @@ function Login() {
             console.log(response.data)
             if(response.data.msg==="Logged in")
             {
-                sessionStorage.setItem("sessionUserUsername", response.data.username);
-                sessionStorage.setItem("sessionUserKey", response.data.key);
-                sessionStorage.setItem("sessionPermissions", response.data.permissions);
-                sessionStorage.setItem("sessionUserId", response.data.user_id);
+                // sessionStorage.setItem("sessionUserUsername", response.data.username);
+                // sessionStorage.setItem("sessionUserKey", response.data.key);
+                // sessionStorage.setItem("sessionPermissions", response.data.permissions);
+                // sessionStorage.setItem("sessionUserId", response.data.user_id);
+                document.cookie = "sessionUserUsername="+response.data.username+"; SameSite=None; Secure";
+                document.cookie = "sessionUserKey="+response.data.key+"; SameSite=None; Secure";
+                document.cookie = "sessionPermissions="+response.data.permissions+"; SameSite=None; Secure";
+                document.cookie = "sessionUserId="+response.data.user_id+"; SameSite=None; Secure";
                 //window.location.replace("/Profile/"+response.data.username)
                 window.location.replace("/")
             }
         });
     }
-
-    // useEffect(()=>{
-    //     axios.post("http://localhost:5000/user_validation/change_user/Maryla", {
-    //         permissions: "admin"
-    //     })
-    // })
 
     return (
         <>

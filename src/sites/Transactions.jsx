@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios'
 import Navbar from './../components/Navbar'
 import TransactionList from "../components/TransactionList";
+import findCookie from "../scripts/findCookie";
 
-var sessionUserKey = sessionStorage.getItem("sessionUserKey")
+var sessionUserKey = findCookie("sessionUserKey")
 
 function Transactions(props) {
     const [reservation, setReservation] = useState("lent");

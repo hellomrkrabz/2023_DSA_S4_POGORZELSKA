@@ -1,14 +1,17 @@
 import Book from "./Book.jsx";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField"
 import axios from 'axios';
 import Popup from 'reactjs-popup';
 import SelectButBetter from 'react-select';
+import fancyStatusTranslator from "../scripts/fancyStatusTranslator.js";
+import findCookie from "../scripts/findCookie.jsx";
 
 
 function TransactionDetails(props) {
     const [transactionId, setTransactionID] = useState(props.detailsKey);
     const [username, setUsername] = useState(props.user);
+    const [ownerName, setOwnerName] = useState(props.ownerName);
     const [title, setTitle] = useState(props.title);
     const [author, setAuthor] = useState(props.author);
     const [isbn, setIsbn] = useState(props.isbn);
@@ -18,6 +21,7 @@ function TransactionDetails(props) {
     const [condition, setCondition] = useState(props.condition);
     const [status, setStatus] = useState(props.status);
     const [book, setBook] = useState(props.book);
+    const [ownedBook, setOwnedBook] = useState(props.ownedBook);
     const [coverPhoto, setCoverPhoto] = useState(props.coverPhoto);
     const [borrowerId, setBorrowerId] = useState(props.borrowerId);
     const [ownerId, setOwnerId] = useState(props.ownerId);
@@ -27,7 +31,12 @@ function TransactionDetails(props) {
 
     const [convertedReturnDate, setConvertedReturnDate] = useState(new Date(props.returnDate))
     var currentDate = new Date();
-    var sessionUserId = sessionStorage.getItem("sessionUserId")
+    const [minDate, setMinDate] = useState(new Date())
+    var sessionUserId = findCookie("sessionUserId")
+
+    const reload = () => {
+        window.location.replace("Transactions/"+ transactionId)
+    }
 
     let opinionScoreOptions = [
         {
@@ -51,6 +60,7 @@ function TransactionDetails(props) {
             label: 5
         },
     ]
+    
 
     return (
         <>  
@@ -62,7 +72,11 @@ function TransactionDetails(props) {
                             Transaction Details:
                         </div>
                         <div className="fw-normal fs-5 text-shadow-light mb-2">
-                            Username: {username}
+                            Username:   {borrowerId==sessionUserId ?
+                                            <div>{ownerName}</div>
+                                            :
+                                            <div>{username}</div>
+                                        }
                         </div>
                         <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mb-2">
                             <Book variant="transactionDetails" author={author} cover_photo={coverPhoto} title={title} key={book}> </Book>
@@ -153,7 +167,7 @@ function TransactionDetails(props) {
                                 </div>
                                 <div className="d-flex align-items-center justify-content-center bg-secondary text-black p-3 rounded">
 
-                                    {status}
+                                    {fancyStatusTranslator(status)}
                                 </div>
                             </div>
                         </div>
@@ -170,10 +184,12 @@ function TransactionDetails(props) {
                                             reservation_date:null,
                                             rent_date:null,
                                             return_date:null,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:2,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Accept Reservation</button>
                                 </div>
@@ -183,30 +199,44 @@ function TransactionDetails(props) {
                                             reservation_date:null,
                                             rent_date:null,
                                             return_date:null,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:10,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Reject Reservation</button>
                                 </div>
                             </div>
                         }
 {/* =======================status = 3 (your_turn) user = borrower================================================================================================ */}
-                        {status==="your_turn" && sessionUserId === borrowerId &&
+                        {status==="your_turn" && sessionUserId == borrowerId &&
                             <div className="col-12 mb-3 d-flex align-items-stretch mt-3 ">
                                 <div className="row col-6 gy-3">
                                     <div className="col-4">
                                         From:
                                     </div>  
                                     <div className="col-6">
-                                        <input type="date" id="" value={rentDate} onChange={(e)=>{setRentDate(e.target.value)}} className="form-control"/>
+                                        <input type="date" id="" value={rentDate} onChange={(e)=>{
+                                            setRentDate(e.target.value)
+
+                                            let result = new Date(e.target.value);
+                                            result.setDate(result.getDate() + 1);
+                                            let year = result.getFullYear();
+                                            let month = String(result.getMonth() + 1).padStart(2, '0');
+                                            let day = String(result.getDate()).padStart(2, '0');
+
+                                            let tmpDate = year + '-' + month + '-' + day;
+                                            setMinDate(tmpDate)
+
+                                        }} className="form-control"/>
                                     </div>
                                     <div className="col-4">
                                         To:
                                     </div>
                                     <div className="col-6">
-                                        <input type="date" id="" value={returnDate} onChange={(e)=>{setRentDate(e.target.value)}} className="form-control"/>
+                                        <input type="date" id="" min={minDate.toString()} value={returnDate} onChange={(e)=>{setReturnDate(e.target.value)}} className="form-control"/>
                                     </div>
                                 </div>
                                 <div className="col-6 d-flex justify-content-center align-items-stretch">
@@ -214,10 +244,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:4,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}
                                     >Submite rent period</button>
@@ -225,17 +257,19 @@ function TransactionDetails(props) {
                             </div>
                         }
 {/* status = 4 (rent_period_confirmation???) and user = book_owner =======================================================================================================================*/}
-                        {status==="dates_chosen" && sessionUserId === ownerId &&
+                        {status==="dates_chosen" && sessionUserId == ownerId &&
                             <div className="col-12 d-flex justify-content-around py-2 align-items-center">
                                 <div className="col-3">
                                     <button className="btn btn-banana-primary col-12" onClick={()=>{
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:6,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Confirm reservation period</button>
                                 </div>
@@ -244,17 +278,19 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:5,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Reject reservation period</button>
                                 </div>
                             </div>
                         }
 {/* =======================status = 5 (dates_rejected) user = borrower================================================================================================ */}
-                        {status==="dates_rejected" && sessionUserId === borrowerId &&
+                        {status==="dates_rejected" && sessionUserId == borrowerId &&
                             <div className="col-12 mb-3 d-flex align-items-stretch mt-3 ">
                                 <div className="row col-6 gy-3">
                                     <div className="col-4">
@@ -275,10 +311,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:4,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}
                                     >Submite new rent period</button>
@@ -286,17 +324,19 @@ function TransactionDetails(props) {
                             </div>
                         }
 {/* status = 6 (accepted_date)  and user = book_owner =======================================================================================================================*/}
-                        {status==="accepted_date" && sessionUserId === ownerId &&
+                        {status==="accepted_date" && sessionUserId == ownerId &&
                             <div className="col-12 d-flex justify-content-around py-2 align-items-center">
                                 <div className="col-3">
                                     <button className="btn btn-banana-primary col-12" onClick={()=>{
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:7,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Confirm book passing</button>
                                 </div>
@@ -310,10 +350,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:8,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Confirm book receipt</button>
                                 </div>
@@ -327,10 +369,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:9,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Book returned</button>
                                 </div>
@@ -344,10 +388,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:12,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Book not returned</button>
                                 </div>
@@ -361,10 +407,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:11,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Confirm book receipt</button>
                                 </div>
@@ -373,10 +421,12 @@ function TransactionDetails(props) {
                                         axios.post("http://localhost:5000/api/transaction/edit", {
                                             rent_date:rentDate,
                                             return_date:returnDate,
-                                            book_id:book,
+                                            book_id:ownedBook,
                                             state:12,
-                                            borrower_key:borrowerId,
+                                            borrower_id:borrowerId,
                                             id:transactionId,
+                                        }).then(()=>{
+                                            reload()
                                         })
                                     }}>Book not delivered</button>
                                 </div>
@@ -423,15 +473,28 @@ function TransactionDetails(props) {
                                 </div>
                                 <button className="btn btn-banana-primary col-3 mt-3" onClick={()=>{
                                     const date = new Date();
-                                    axios.post("http://localhost:5000/api/opinion/add", {
-                                        rating: opinionScore.value,
-                                        visible: true,
-                                        content: opinionContent,
-                                        borrower_id: borrowerId,
-                                        renter_id: ownerId
-                                    }).then(()=>{
-                                        setDisplayAddOpinion(false);
-                                    })
+                                    if(sessionUserId == borrowerId){
+                                        axios.post("http://localhost:5000/api/opinion/add", {
+                                            rating: opinionScore.value,
+                                            visible: true,
+                                            content: opinionContent,
+                                            borrower_id: ownerId,
+                                            renter_id: borrowerId
+                                        }).then(()=>{
+                                            reload()
+                                            setDisplayAddOpinion(false);
+                                        })
+                                    }else{
+                                        axios.post("http://localhost:5000/api/opinion/add", {
+                                            rating: opinionScore.value,
+                                            visible: true,
+                                            content: opinionContent,
+                                            borrower_id: borrowerId,
+                                            renter_id: ownerId
+                                        }).then(()=>{
+                                            setDisplayAddOpinion(false);
+                                        })
+                                    }
                                 }}>Add opinion</button>
                             </div>
                         </Popup>

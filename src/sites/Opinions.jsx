@@ -10,6 +10,7 @@ import OpinionGrid from "../components/OpinionGrid";
 import Popup from 'reactjs-popup';
 import Textfield from '@mui/material/TextField'
 import axios from "axios"
+import findCookie from "../scripts/findCookie";
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -53,8 +54,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const username = window.location.pathname.split('/').pop()
-var sessionUsername= sessionStorage.getItem("sessionUserUsername")
-var sessionUserKey= sessionStorage.getItem("sessionUserKey")
+var sessionUsername= findCookie("sessionUserUsername")
+var sessionUserKey= findCookie("sessionUserKey")
 
 function Opinions(props) {
 
@@ -75,7 +76,7 @@ function Opinions(props) {
 
     async function fetchOpinion()
     {
-        const response = await axios.get("http://localhost:5000/api/opinions/" + sessionUsername)
+        const response = await axios.get("http://localhost:5000/api/opinions/" + window.location.pathname.split('/').pop())
         let fetchedOpinions = response.data.opinions
 
         setOpinions(fetchedOpinions)

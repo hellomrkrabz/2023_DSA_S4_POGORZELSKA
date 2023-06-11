@@ -3,6 +3,7 @@ import Navbar from "./../components/Navbar"
 import ProfileComponent from "../components/ProfileComponent";
 import EditProfile from "../components/EditProfile";
 import axios from "axios"
+import findCookie from "../scripts/findCookie";
 
 function getUserNameFromLink()
 {
@@ -16,8 +17,8 @@ function Profile(props) {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [user, setUser] = useState({username:"", rating:0, bio:"",adress:"", src:""})
 
-    var sessionUserUsername = sessionStorage.getItem("sessionUserUsername")
-    var sessionUserKey= sessionStorage.getItem("sessionUserKey")
+    var sessionUserUsername = findCookie("sessionUserUsername")
+    var sessionUserKey = findCookie("sessionUserKey")
 
     useEffect(() => {
         

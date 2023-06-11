@@ -141,7 +141,8 @@ def get_users():
         'key': u.get_key(),
         'phone_number': u.get_phone_number(),
         'city': u.get_city(),
-        'details': u.get_details()
+        'details': u.get_details(),
+        'permissions': u.get_permissions().name,
     }for u in users]
 
     return jsonify({'users': users_json})
@@ -259,16 +260,23 @@ def get_user_transactions(username):
     user = User.query.filter_by(username=username).first()
     if user is not None:
         transactions = Transaction.query.all()
-        print(transactions)
+        #print(transactions)
         filtered_transactions = []
         for t in transactions:
             owned_book = Owned_Book.query.filter_by(owned_book_id=t.book_id).first()
             if owned_book.owner_id == user.id:
-                print(t)
+                #print(t)
                 filtered_transactions.append(t)
 
         filtered_transactions_2 = Transaction.query.filter_by(borrower_id=user.id)
         filtered_transactions += filtered_transactions_2
+
+        for t in filtered_transactions:
+            owned_book = Owned_Book.query.filter_by(owned_book_id=t.get_book_id()).first()
+            t.book_info = Book.query.filter_by(book_id=owned_book.get_book_id()).first()
+            t.owner_info = User.query.filter_by(id=owned_book.get_owner_id()).first()
+
+
         if filtered_transactions is not None:
             transactions_json = [{
                 'id': t.get_id(),
@@ -276,9 +284,12 @@ def get_user_transactions(username):
                 'rent_date': t.get_rent_date(),
                 'return_date': t.get_return_date(),
                 'state': t.get_state().name,
-                'book_id': t.get_book_id(),
+                'owned_book_id': t.get_book_id(),   # to jest owned_book_id
+                'book_id':t.book_info.get_id(),
                 'borrower_id': t.get_borrower_id(),
-                'borrower_username': t.get_borrower_username()
+                'borrower_username': t.get_borrower_username(),
+                'owner_username': t.owner_info.get_username(),
+                'title_for_testing': t.book_info.get_title()
             } for t in filtered_transactions]
             return jsonify({'transactions': transactions_json})
     return jsonify({'msg': 'it no good'})
@@ -289,6 +300,7 @@ def get_transaction_by_id(t_id):
    if transaction is not None:
 
         owned_book = Owned_Book.query.filter_by(owned_book_id=transaction.get_book_id()).first()
+        book_owner = User.query.filter_by(id=owned_book.get_owner_id()).first()
 
         transaction_json = {
             'id': transaction.get_id(),
@@ -296,10 +308,12 @@ def get_transaction_by_id(t_id):
             'rent_date': transaction.get_rent_date(),
             'return_date': transaction.get_return_date(),
             'state': transaction.get_state().name,
-            'book_id': transaction.get_book_id(),
+            'book_id': owned_book.get_book_id(),
+            'owned_book_id': transaction.get_book_id(),
             'borrower_id': transaction.get_borrower_id(),
             'borrower_username': transaction.get_borrower_username(),
-            'owner_id': owned_book.get_id(),
+            'owner_username': book_owner.get_username(),
+            'owner_id': owned_book.get_owner_id(),
             'condition': States(owned_book.get_book_state()).name,
         }
         return jsonify({'transaction': transaction_json})
@@ -376,15 +390,24 @@ def get_opinions():
 @bp.route('/reports', methods=['GET'])
 def get_reports():
     reports = Report.query.all()
+
+    for r in reports:
+        r.reporter_username = User.query.filter_by(id=r.get_reporter_id()).first().get_username()
+        r.reported_username = User.query.filter_by(id=r.get_reported_id()).first().get_username()
+
     if reports is not None:
         report_json = [{
             'reportDate': r.get_report_date(),
             'reporter': r.get_reporter_id(),
             'reported': r.get_reported_id(),
+            'reporter_username': r.reporter_username,
+            'reported_username': r.reported_username,
             'status': r.get_status(),
             'opinionDate': r.get_opinion_date(),
             'opinionContent': r.get_opinion_info(),
-            'reportContent': r.get_content()
+            'opinion_id': r.get_opinion_id(),
+            'reportContent': r.get_content(),
+            'report_id': r.get_report_id()
         } for r in reports]
         return jsonify({'reports': report_json})
     return jsonify({'msg': 'it no good'})
@@ -551,13 +574,14 @@ def add_or_edit_entity(entity_type, action):
                 entity.content = content
 
         elif entity_type == 'transaction':           
-            reservation_date = data['reservation_date']
+            #reservation_date = data['reservation_date']
             rent_date = data['rent_date']
             return_date = data['return_date']
             book_id = data['book_id']
             state = data['state']
-            user = User.query.filter_by(key=data['borrower_key']).first()
+            user = User.query.filter_by(id=data['borrower_id']).first()
             specific_book = Owned_Book.query.filter_by(owned_book_id=book_id).first()
+            general_book = Book.query.filter_by(book_id=specific_book.get_book_id()).first()
             owner = User.query.filter_by(id=specific_book.get_owner_id()).first()
             borrower_id = user.id
             if action == "add":
@@ -591,61 +615,69 @@ def add_or_edit_entity(entity_type, action):
                     attr_inputter_args = attr_input_args_id("status-change-link", "href",
                                                             "http://localhost:3000/Transactions" + str(entity.get_id()))
                     inner_html_inputter_args = inner_html_input_args_id("username", user.get_username())
+                    inner_book_name_args = inner_html_input_args_id("book_name", general_book.get_title())
 
                     inputter_list_borrower = []
                     inputter_list_borrower.append(html_attr_inputter_by_id(attr_inputter_args))
                     inputter_list_borrower.append(html_inner_inputter_by_id(inner_html_inputter_args))
 
+                    inputter_list_borrower_w_book = inputter_list_borrower
+                    inputter_list_borrower_w_book.append(html_inner_inputter_by_id(inner_book_name_args))
+
                     match state:
                         case 2:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "reservation_accepted.html",
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "reservation_accepted.html",
                                              inputter_list_borrower)
                         case 3:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "reservation_collection.html",
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "reservation_collection.html",
                                              inputter_list_borrower)
                         case 5:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "email_confirmation.html",
-                                             inputter_list_borrower) #do zmiany
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "reservation_rejected.html",
+                                             inputter_list_borrower)
                         case 6:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "reservation_contact.html",
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "reservation_contact.html",
                                              inputter_list_borrower)
                         case 7:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "email_confirmation.html",
-                                             inputter_list_borrower) #do zmiany
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_passed_down.html",
+                                             inputter_list_borrower_w_book) 
                         case 10:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "transaction_cancelled.html",
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_cancelled.html",
                                              inputter_list_borrower)
                         case 11:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "transaction_finished.html",
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_finished.html",
                                              inputter_list_borrower)
                         case 12:
-                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction status update", "transaction_finished.html",
+                            send_mail_from_html_file(user.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_finished.html",
                                              inputter_list_borrower)
 
                 if state in (4,9,10,11,12):
                     attr_inputter_args = attr_input_args_id("status-change-link", "href",
-                                                            "http://localhost:3000/Transactions" + entity.get_id())
+                                                            "http://localhost:3000/Transactions" + str(entity.get_id()))
                     inner_html_inputter_args = inner_html_input_args_id("username", user.get_username())
 
                     inputter_list_owner = []
                     inputter_list_owner.append(html_attr_inputter_by_id(attr_inputter_args))
                     inputter_list_owner.append(html_inner_inputter_by_id(inner_html_inputter_args))
+
+                    inner_book_name_args = inner_html_input_args_id("book_name", general_book.get_title())
+                    inputter_list_owner_w_book = inputter_list_owner
+                    inputter_list_owner_w_book.append(html_inner_inputter_by_id(inner_book_name_args))
                     match state:
                         case 4:
-                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction status update",
+                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction "+str(data["id"])+" status update",
                                                      "reservation_confirmation.html",
                                                      inputter_list_owner)
                         case 9:
-                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction status update", "reservation_collection.html",
-                                             inputter_list_owner) #do zmiany
+                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "reservation_collection.html",
+                                             inputter_list_owner)
                         case 10:
-                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction status update", "transaction_cancelled.html",
+                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_cancelled.html",
                                              inputter_list_owner)
                         case 11:
-                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction status update", "transaction_finished.html",
+                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_finished.html",
                                              inputter_list_owner)
                         case 12:
-                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction status update", "transaction_finished.html",
+                            send_mail_from_html_file(owner.get_email(), "Banana books: Transaction "+str(data["id"])+" status update", "transaction_finished.html",
                                              inputter_list_owner)
 
         elif entity_type == 'report':
@@ -667,7 +699,7 @@ def add_or_edit_entity(entity_type, action):
                     reported_id=reported_id
                 )
             elif action == "edit":
-                entity = Report.query.filter_by(id=data['id']).first()
+                entity = Report.query.filter_by(report_id=data['id']).first()
                 status = data['state']
                 entity.status = status
 

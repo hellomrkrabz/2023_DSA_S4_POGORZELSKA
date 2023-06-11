@@ -4,6 +4,7 @@ import Transaction from "./Transaction.jsx"
 import { v4 } from "uuid";
 import TransactionDetails from "./TransactionDetails.jsx";
 import axios from 'axios'
+import findCookie from "../scripts/findCookie.jsx";
 
 function TransactionList(props) {
 
@@ -17,13 +18,14 @@ function TransactionList(props) {
     const [detailsKey, setDetailsKey] = useState(1);
 
     //All this gets updated from db whenever detailsKey changes
-    var sessionUsername = sessionStorage.getItem("sessionUserUsername");
-
+    var sessionUsername = findCookie("sessionUserUsername");
 
     const [transactions, setTransactions] = useState([]);
 
     const [detailsUsername, setDetailsUsername] = useState("");
+    const [detailsOwnerName, setDetailsOwnerName] = useState("");
     const [detailsBook, setDetailsBook] = useState("");
+    const [detailsOwnedBook, setDetailsOwnedBook] = useState("");
     const [detailsReservationDate, setDetailsReservationDate] = useState("");
     const [detailsRentDate, setDetailsRentDate] = useState("");
     const [detailsStatus, setDetailsStatus] = useState("");
@@ -37,6 +39,19 @@ function TransactionList(props) {
     const [ownerId, setOwnerId] = useState();
     //const [detailsIsFinished, setDetailsIsFinished] = useState((props.status === "finished" || props.status === "failed") ? true : false); //finished/failed do zmiany na faktyczne statusy - �eby pokazywac guzik do recenzji
 
+    function compareTransactions(a, b) {
+        let aDate = new Date(a.rent_date)
+        let bDate = new Date(b.rent_date)
+        if (aDate < bDate) {
+          return -1;
+        }
+        if (aDate > bDate) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      }
+
     //Getting user's all transactions'
     useEffect(() => {
 
@@ -49,8 +64,9 @@ function TransactionList(props) {
         
         axios.get("http://localhost:5000/api/transactions/" + sessionUsername).then((response) => {
             var trans = response.data.transactions;
+            trans.sort(compareTransactions)
             setTransactions(trans);
-            //console.log(trans)
+            //console.log(response.data.transactions)
             return trans;
         })
     }, [])
@@ -66,16 +82,18 @@ function TransactionList(props) {
             
             var transactionJson = response.data; 
             if (transactionJson.msg === undefined) {
-                console.log(transactionJson.transaction)
+                //console.log(transactionJson.transaction)
                 setDetailsUsername(transactionJson.transaction.borrower_username);
                 setDetailsReservationDate(transactionJson.transaction.reservation_date ? (transactionJson.transaction.reservation_date).slice(0,-12) : "");
                 setDetailsRentDate(transactionJson.transaction.rent_date ? (transactionJson.transaction.rent_date).slice(0,-12) : "");
                 setDetailsReturnDate(transactionJson.transaction.return_date ? (transactionJson.transaction.return_date).slice(0,-12) : "");
                 setDetailsStatus(transactionJson.transaction.state);
                 setDetailsBook(transactionJson.transaction.book_id);
+                setDetailsOwnedBook(transactionJson.transaction.owned_book_id);
                 setBorrowerId(transactionJson.transaction.borrower_id);
                 setOwnerId(transactionJson.transaction.owner_id)
-                setDetailsCondition(transactionJson.transaction.condition); 
+                setDetailsCondition(transactionJson.transaction.condition);
+                setDetailsOwnerName(transactionJson.transaction.owner_username)
                 return(transactionJson.transaction.book_id)
                 
             }
@@ -89,17 +107,14 @@ function TransactionList(props) {
                     setDetailsIsbn(book_json.isbn);                   
                 })            
         })
-
-
     }, [detailsKey])
-
 
     return (
         <>
             {
                 showDetails ?
                     <>
-                        <TransactionDetails key={v4()} detailsKey={detailsKey} title={detailsTitle} author={detailsAuthor} coverPhoto={detailsCoverPhoto} isbn={detailsIsbn} condition={detailsCondition} user={detailsUsername} reservationDate={detailsReservationDate} rentDate={detailsRentDate} returnDate={detailsReturnDate} status={detailsStatus} book={detailsBook} updateShowDetailsFromChildren={setShowDetails} borrowerId={borrowerId} ownerId={ownerId}> </TransactionDetails >
+                        <TransactionDetails key={v4()} detailsKey={detailsKey} title={detailsTitle} author={detailsAuthor} coverPhoto={detailsCoverPhoto} isbn={detailsIsbn} condition={detailsCondition} user={detailsUsername} ownerName={detailsOwnerName} reservationDate={detailsReservationDate} rentDate={detailsRentDate} returnDate={detailsReturnDate} status={detailsStatus} book={detailsBook} ownedBook={detailsOwnedBook} updateShowDetailsFromChildren={setShowDetails} borrowerId={borrowerId} ownerId={ownerId}> </TransactionDetails >
                     </>
                     :
                     <>
@@ -108,7 +123,7 @@ function TransactionList(props) {
                                 <div>
                                     <br></br>
                                 </div>
-                                <Transaction user={t.borrower_username} detailsKey={detailsKey} reservationDate={t.reservation_date} updateShowDetailsFromChildren={setShowDetails} updateDetailsKey={setDetailsKey} status={t.state} transactionID={t.id}  book={t.book_id}> </Transaction>
+                                <Transaction user={t.borrower_username} ownerName={t.owner_username} detailsKey={detailsKey} reservationDate={t.reservation_date} updateShowDetailsFromChildren={setShowDetails} updateDetailsKey={setDetailsKey} status={t.state} transactionID={t.id} book={t.book_id} borrowerId={t.borrower_id}> </Transaction>
                             </div>
                         )}
                     </>

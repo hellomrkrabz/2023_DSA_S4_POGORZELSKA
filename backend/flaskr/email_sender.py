@@ -26,5 +26,6 @@ def send_mail_from_html_file(target_email, title, filename, html_proccesor_insta
 
     msg = Message(title, recipients = [target_email])
     msg.html = html_string
+    print(html_string)
     mail.send(msg)
     print("Email '"+title+"' sent to: '"+target_email+"'")

@@ -3,19 +3,22 @@ import Book from "./Book.jsx";
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import axios from 'axios'
+import fancyStatusTranslator from "../scripts/fancyStatusTranslator.js";
+import findCookie from "../scripts/findCookie.jsx";
 
 function Transaction(props) {
+
+    var sessionUserId = findCookie("sessionUserId")
+
     const [username, setUsername] = useState(props.user);
+    const [ownerName, setOwnerName] = useState(props.ownerName);
+    const [borrowerId, setBorrowerId] = useState(props.borrowerId);
     const [title, setTitle] = useState("Titel");
     const [author, setAuthor] = useState("Writer");
     const [reservationDate, setReservationDate] = useState(props.reservationDate);
     const [status, setStatus] = useState(props.status);
     const [book, setBook] = useState(props.book);
-    const [coverPhoto, setCoverPhoto] = useState("");
-    
-
-
-    //const [showDetails, setShowDetails] = useState(props.updateShowDetailsFromChildren);
+    const [coverPhoto, setCoverPhoto] = useState("");    
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/book_info/" + book).then((response) => {
@@ -48,12 +51,16 @@ function Transaction(props) {
                                             <br></br>
                                         </div>
                                         <div>
-                                            {username}
+                                            {borrowerId==sessionUserId ?
+                                                <div>{ownerName}</div>
+                                                :
+                                                <div>{username}</div>
+                                            }
                                         </div>
                                     </div>
                                     <div className="col-4 row h-25 gx-3">
                                         <div className="col-6 d-flex align-items-center justify-content-center bg-secondary text-black rounded-1"> 
-                                            {status}
+                                            {fancyStatusTranslator(status)}
                                         </div>    
                                         <div className="col-6">
                                             <button className="col-12 btn btn-banana-primary " onClick={() => {props.updateShowDetailsFromChildren(true); props.updateDetailsKey(props.transactionID); }}>Details</button>
@@ -61,6 +68,18 @@ function Transaction(props) {
                                     </div>
                             </div>                                              
                         </div>
+
+                        {/* <button className="btn btn-banana-primary col-12" onClick={()=>{
+                                        axios.post("http://localhost:5000/api/transaction/edit", {
+                                            reservation_date:null,
+                                            rent_date:null,
+                                            return_date:null,
+                                            book_id:1,
+                                            state:3,
+                                            borrower_id:1,
+                                            id:3,
+                                        })
+                                    }}>Here be dragons</button> */}
                     </div>
                 </>
     );

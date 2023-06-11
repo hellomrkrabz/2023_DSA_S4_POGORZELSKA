@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Textfield from '@mui/material/TextField'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import axios from 'axios';
 
 function DetailedReportComponent(props) {
     const [openPopup, setOpenPopup] = useState(false);
@@ -18,7 +19,7 @@ function DetailedReportComponent(props) {
                             <Textfield 
                                 disabled
                                 fullWidth
-                                value={props.reporter}
+                                value={props.reporter_username}
                                 />
                             <div>Report Date</div>
                             <Textfield 
@@ -32,7 +33,7 @@ function DetailedReportComponent(props) {
                             <Textfield 
                                 disabled
                                 fullWidth
-                                value={props.reported}
+                                value={props.reported_username}
                                 />
                             <div>Opinion Date</div>
                             <Textfield 
@@ -111,6 +112,18 @@ function DetailedReportComponent(props) {
                                         >Cancel</button>
                                     <button
                                         onClick={()=>{
+                                            axios.post("http://localhost:5000/user_validation/change_user/"+props.reported_username, {
+                                                permissions: "warned",
+                                            })
+                                            axios.post("http://localhost:5000/api/report/edit", {
+                                                content : props.opinionContent,
+                                                date : props.reportDate,
+                                                opinion_id : props.opinion_id,
+                                                reporter : props.reporter_username,
+                                                reported : props.reported,
+                                                id: props.report_id,
+                                                state: true
+                                            })
                                             console.log("warned")
                                             setPopupType("")
                                             setOpenPopup(false)
@@ -131,6 +144,18 @@ function DetailedReportComponent(props) {
                                         >Cancel</button>
                                     <button
                                         onClick={()=>{
+                                            axios.post("http://localhost:5000/user_validation/change_user/"+props.reported_username, {
+                                                permissions: "banned",
+                                            })
+                                            axios.post("http://localhost:5000/api/report/edit", {
+                                                content : props.opinionContent,
+                                                date : props.reportDate,
+                                                opinion_id : props.opinion_id,
+                                                reporter : props.reporter_username,
+                                                reported : props.reported,
+                                                id: props.report_id,
+                                                state: true
+                                            })
                                             console.log("banned")
                                             setPopupType("")
                                             setOpenPopup(false)
@@ -151,6 +176,15 @@ function DetailedReportComponent(props) {
                                         >Cancel</button>
                                     <button
                                         onClick={()=>{
+                                            axios.post("http://localhost:5000/api/report/edit", {
+                                                content : props.opinionContent,
+                                                date : props.reportDate,
+                                                opinion_id : props.opinion_id,
+                                                reporter : props.reporter_username,
+                                                reported : props.reported,
+                                                id: props.report_id,
+                                                state: true
+                                            })
                                             console.log("ignored")
                                             setPopupType("")
                                             setOpenPopup(false)

@@ -15,6 +15,7 @@ import Book from '../components/Book'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { v4 } from 'uuid'
+import findCookie from '../scripts/findCookie'
 
 function FrontPage(props) {
 	var book1 = {
@@ -46,7 +47,7 @@ function FrontPage(props) {
 		isbn: 4,
 		owner_id: 4,
 	}
-	var sessionUsername = sessionStorage.getItem('sessionUserUsername')
+	var sessionUsername = findCookie('sessionUserUsername')
 
 	const [bookIds, setBookIds] = useState([])
 	const [books, setBooks] = useState([])
@@ -125,7 +126,7 @@ function FrontPage(props) {
 							<div className='position-absolute'>
 								<div className='fs-1 mt-5 text-uppercase text-shadow-light'>
 									<p className='fw-bold text-bananablue h1 text-top-notlogged'>banana books</p>
-									<p className='text-bananabluedark h1 mt-3' style={{"font-size":"60px", "font-weight":"bold"}}>Read more, rent more, Expand your mind <br/>with every book</p>
+									<p className='text-bananabluedark h1 mt-3' style={{"fontSize":"60px", "fontWeight":"bold"}}>Read more, rent more, Expand your mind <br/>with every book</p>
 								</div>
 							</div>
 						</div>

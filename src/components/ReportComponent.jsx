@@ -7,8 +7,8 @@ function ReportComponent(props) {
         <>
             <div className="row col-11 bg-banana-blue bg-opacity-25 border border-dark mt-3 rounded py-3">
                 <div className="col-3 fs-3 fw-semibold">{("0" + date.getDay()).slice(-2) + "." + ("0" + date.getMonth()).slice(-2)  + "." + date.getFullYear() }</div>
-                <div className="col-3 fs-3 fw-semibold">{props.report.reporter}</div>
-                <div className="col-3 fs-3 fw-semibold">{props.report.reported}</div>
+                <div className="col-3 fs-3 fw-semibold">{props.report.reporter_username}</div>
+                <div className="col-3 fs-3 fw-semibold">{props.report.reported_username}</div>
                 <div className="col-3 d-flex justify-content-start">
                     {props.report.status &&
                     <>

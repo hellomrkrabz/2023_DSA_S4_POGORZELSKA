@@ -6,10 +6,12 @@ import Popup from 'reactjs-popup';
 import popupStyle from "../style/popup_style.css"
 import TextField from "@mui/material/TextField"
 import axios from 'axios'
+import findCookie from "../scripts/findCookie";
 
 function Book(props) {
 
-    var sessionUserKey= sessionStorage.getItem("sessionUserKey")
+    var sessionUserKey= findCookie("sessionUserKey")
+    var sessionUserId = findCookie("sessionUserId")
 
     const [displayDetails, setDisplayDetails] = useState(false)
     const [displayReserve, setDisplayReserve] = useState(true)
@@ -84,16 +86,15 @@ function Book(props) {
                                             value={props.isbn}
                                             className="bg-light col-12"
                                         />
+                                        <div class="col-12 d-flex flex-column align-items-start mb-3">
+                                            <label className="col-form-label">Owner</label>
+                                            <Link to={"/Opinions/"+ownerInfo.username} className="text-decoration-none">
+                                                <div class="col-12 d-flex align-items-center bg-light rounded">
+                                                    <input type="button" readonly className="btn btn-outline-banana-blue col-12 form-control-plaintext text-dark fs-5" role="button" value={ownerInfo.username}/>
+                                                </div>
+                                            </Link>
+                                        </div>
 
-                                        
-                                        <Link to={"/Opinions/"+ownerInfo.username}>
-                                            <label>Owner</label>
-                                        </Link>
-                                            <TextField
-                                                disabled
-                                                value={ownerInfo.username}
-                                                className="bg-light col-12"
-                                            />
                                         
                                         
                                     </div>
@@ -108,9 +109,9 @@ function Book(props) {
                                                         reservation_date: String(date.getFullYear()) + "-" + String(("0" + date.getMonth()).slice(-2)) + "-" + String(("0" + date.getDate()).slice(-2)),
                                                         rent_date:String(date.getFullYear()) + "-" + String(("0" + date.getMonth()).slice(-2)) + "-" + String(("0" + date.getDate()).slice(-2)),
                                                         return_date:String(date.getFullYear()) + "-" + String(("0" + date.getMonth()).slice(-2)) + "-" + String(("0" + date.getDate()).slice(-2)),
-                                                        book_id:props.book_id,
+                                                        book_id:props.owned_book_id,
                                                         state:"reservation",
-                                                        borrower_key: sessionUserKey,
+                                                        borrower_id:sessionUserId,
                                                     }).then(()=>{
                                                         setDisplayReserve(false)
                                                     })  
@@ -238,9 +239,9 @@ function Book(props) {
                                                 reservation_date: String(date.getFullYear()) + "-" + String(("0" + date.getMonth()).slice(-2)) + "-" + String(("0" + date.getDate()).slice(-2)),
                                                 rent_date:String(date.getFullYear()) + "-" + String(("0" + date.getMonth()).slice(-2)) + "-" + String(("0" + date.getDate()).slice(-2)),
                                                 return_date:String(date.getFullYear()) + "-" + String(("0" + date.getMonth()).slice(-2)) + "-" + String(("0" + date.getDate()).slice(-2)),
-                                                book_id:props.book_id,
+                                                book_id:props.owned_book_id,
                                                 state:"reservation",
-                                                borrower_key: sessionUserKey,
+                                                borrower_id:sessionUserId,
                                             }).then(()=>{
                                                 setDisplayReserve(false)
                                             })  
@@ -262,20 +263,18 @@ function Book(props) {
             <>
                 <div className="col">
                     <div key={props.id} className="d-flex flex-column align-items-center">
-                        <Link to={props.link}>
-                            <div >
-                                {props.imageLinks !== undefined && props.imageLinks.smallThumbnail !== undefined &&
-                                    <img src={props.imageLinks.smallThumbnail} alt="book" style={{width: "100%",height:"100%", objectFit: "cover"}}/>
-                                }                               
+                        <div >
+                            {props.imageLinks !== undefined && props.imageLinks.smallThumbnail !== undefined &&
+                                <img src={props.imageLinks.smallThumbnail} alt="book" style={{width: "100%",height:"100%", objectFit: "cover"}}/>
+                            }
 
-                                {props.cover_photo !== "notFound" ?
-                                    <img src={props.cover_photo} alt="book" height="200" width="130" />
-                                    :
-                                    <img src={banana} alt="book" height="500" width="325" />
-                                }
+                            {props.cover_photo !== "notFound" ?
+                                <img src={props.cover_photo} alt="book" height="200" width="130" />
+                                :
+                                <img src={banana} alt="book" height="500" width="325" />
+                            }
 
-                            </div>
-                        </Link>
+                        </div>
                     </div>
                 </div>
             </>

@@ -7,6 +7,7 @@ import BookGrid from "../components/BookGrid";
 import banana from "../media/banana.png";
 import AddBookComponent from "../components/AddBookComponent";
 import loading from "../media/loading.gif"
+import findCookie from "../scripts/findCookie";
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -65,7 +66,7 @@ function Offers(props) {
     const [filteredBooks, setFilteredBooks] = useState([])
     const [booksToDisplay, setBooksTodisplay] = useState([])
     const [pageNumber, setPageNumber] = useState(0)
-    var sessionUsername= sessionStorage.getItem("sessionUserUsername")
+    var sessionUsername = findCookie("sessionUserUsername")
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/user_info/"+sessionUsername).then((response) => {
